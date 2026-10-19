@@ -15,7 +15,7 @@ struct RemoteEntry: Identifiable, Sendable, Hashable {
     func relativeFolder(to root: String) -> String {
         let parent = (path as NSString).deletingLastPathComponent
         let prefix = root == "/" ? "/" : root + "/"
-        return parent == root ? "Dieser Ordner" : String(parent.dropFirst(prefix.count))
+        return parent == root ? String(localized: "Dieser Ordner") : String(parent.dropFirst(prefix.count))
     }
 }
 
@@ -61,11 +61,11 @@ enum RatingFilter: Int, CaseIterable, Identifiable, Sendable {
     var id: Self { self }
     var title: String {
         switch self {
-        case .all: return "Alle Bewertungen"
-        case .unrated: return "Ohne Bewertung"
-        case .one: return "1 Stern"
-        case .rejected: return "Abgelehnt"
-        default: return "\(rawValue) Sterne"
+        case .all: return String(localized: "Alle Bewertungen")
+        case .unrated: return String(localized: "Ohne Bewertung")
+        case .one: return String(localized: "1 Stern")
+        case .rejected: return String(localized: "Abgelehnt")
+        default: return String(localized: "\(String(rawValue)) Sterne")
         }
     }
     func matches(_ rating: Int?) -> Bool {
@@ -161,6 +161,6 @@ struct DirectoryReadError: LocalizedError {
     let path: String
     let reason: String
     var errorDescription: String? {
-        "Der Ordner \(path) konnte nicht gelesen werden: \(reason)\nDie bisherige Ansicht bleibt erhalten."
+        String(localized: "Der Ordner \(String(path)) konnte nicht gelesen werden: \(String(reason))\nDie bisherige Ansicht bleibt erhalten.")
     }
 }

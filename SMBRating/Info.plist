@@ -7,7 +7,7 @@
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER).rating-scan.*</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>de</string>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Lichtblick</string>
 	<key>CFBundleExecutable</key>
@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Lichtblick verbindet sich mit deinem SMB-Server, um Bilder und Bewertungen zu lesen und zu speichern.</string>
+	<string>Lichtblick connects to your SMB server to read and save photos and ratings.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>

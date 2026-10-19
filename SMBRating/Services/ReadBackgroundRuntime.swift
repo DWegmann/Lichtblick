@@ -24,7 +24,7 @@ final class ReadBackgroundRuntime {
         let id = UUID()
         grantID = id
         self.expiration = expiration
-        shortTask = UIApplication.shared.beginBackgroundTask(withName: "Bilder und Bewertungen laden") { [weak self] in
+        shortTask = UIApplication.shared.beginBackgroundTask(withName: String(localized: "Bilder und Bewertungen laden")) { [weak self] in
             MainActor.assumeIsolated {
                 guard let self, self.grantID == id else { return }
                 self.endShortTask()
@@ -96,7 +96,7 @@ final class ReadBackgroundRuntime {
             MainActor.assumeIsolated { self?.accept(task) }
         }) else { return }
         let request = BGContinuedProcessingTaskRequest(identifier: identifier,
-            title: "Bildbewertungen laden", subtitle: "0 / \(total) Bewertungen geprüft")
+            title: String(localized: "Bildbewertungen laden"), subtitle: String(localized: "0 / \(String(total)) Bewertungen geprüft"))
         // Never schedule stale filtering work for an unspecified later time.
         request.strategy = .fail
         cancelRequest = { BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: identifier) }
@@ -133,7 +133,7 @@ final class ReadBackgroundRuntime {
         updateLongTask = { count, total in
             task.progress.totalUnitCount = Int64(total)
             task.progress.completedUnitCount = Int64(count)
-            task.updateTitle("Bildbewertungen laden", subtitle: "\(count) / \(total) Bewertungen geprüft")
+            task.updateTitle(String(localized: "Bildbewertungen laden"), subtitle: String(localized: "\(String(count)) / \(String(total)) Bewertungen geprüft"))
         }
         finishLongTask = { success in task.setTaskCompleted(success: success) }
         updateLongTask?(completed, total)

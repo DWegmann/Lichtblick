@@ -1,166 +1,175 @@
 # Lichtblick · SMB Photo Rating
 
-Ich habe Lichtblick für meinen eigenen Gebrauch entwickelt. Wenn du die App ebenfalls nutzen möchtest, aber keine Möglichkeit hast, sie selbst zu bauen, melde dich gerne über ein [GitHub-Issue](https://github.com/DWegmann/Lichtblick/issues). Bei entsprechendem Interesse könnte ich die App auch zur Veröffentlichung im App Store einreichen.
+**English** | [Deutsch](README.de.md)
 
-> **100 % vibe coded:** Der eigene App-Code wurde vollständig mit KI generiert. Die Ideen, Anforderungen und die Steuerung der Entwicklung stammen von Dominic Wegmann. Verwendete Bibliotheken sind eigenständige Projekte ihrer jeweiligen Urheber.
+I developed Lichtblick for my own use. If you would like to use the app but cannot build it yourself, feel free to get in touch through a [GitHub issue](https://github.com/DWegmann/Lichtblick/issues). If there is enough interest, I could also submit the app to the App Store.
+
+> **100% vibe coded:** All original app code was generated with AI. The ideas, requirements and direction of development come from Dominic Wegmann. The libraries used are independent projects by their respective authors.
 >
-> **Nur nichtkommerzielle Weiterverwendung:** Der eigene Projektcode darf unter der [PolyForm Noncommercial License 1.0.0](LICENSE.md) verwendet, verändert und weitergegeben werden. Eine kommerzielle Verwertung ist durch diese Lizenz nicht erlaubt.
+> **Noncommercial reuse only:** The original project code may be used, modified and shared under the [PolyForm Noncommercial License 1.0.0](LICENSE.md). This license does not permit commercial use.
 
-Native iPad-App in SwiftUI, ab iPadOS 17. Bilder direkt auf einer SMB-2/3-Freigabe ansehen und mit 0–5 Sternen bewerten. Der Projektordner enthält ein direkt in Xcode zu öffnendes App-Projekt und ein separat testbares Metadatenmodul.
+A native SwiftUI app for iPadOS 17 and later. Browse photos directly on an SMB 2/3 share and assign 0–5 stars. The repository contains an app project you can open directly in Xcode and a metadata module that can be tested separately.
 
-## Beispiel-Screenshots
+## Example screenshots
 
-Die Aufnahmen zeigen die Mac-Catalyst-Version mit der integrierten Demobibliothek und generierten Landschaftsillustrationen. Die App ist primär für das iPad ausgelegt; die Anordnung der Bedienelemente kann dort abweichen.
+These screenshots show the German Mac Catalyst version with its built-in demo library and generated landscape illustrations. The app is primarily designed for iPad, where the arrangement of controls may differ. Both English and German are supported.
 
-### Bibliothek
+### Library
 
-Bildübersicht mit Sternebewertungen und Bildern aus Unterordnern.
+Photo grid with star ratings and photos from subfolders.
 
-![Bildübersicht der Demobibliothek mit neun Bildern und Sternebewertungen](docs/screenshots/bibliothek.jpg)
+![Demo library showing nine photos and their star ratings](docs/screenshots/bibliothek.jpg)
 
-### Bewertungsfilter
+### Rating filter
 
-Die Bildübersicht lässt sich nach unbewerteten, mit 1–5 Sternen bewerteten oder abgelehnten Bildern filtern.
+Filter the library to show unrated photos, photos with exactly 1–5 stars, or rejected photos.
 
-![Geöffnetes Menü mit den verfügbaren Bewertungsfiltern](docs/screenshots/bewertungsfilter.jpg)
+![Open menu showing the available rating filters](docs/screenshots/bewertungsfilter.jpg)
 
-### Einzelansicht
+### Photo viewer
 
-Große Bildansicht mit Navigation und direkter Sternebewertung.
+Large photo view with navigation and direct star rating controls.
 
-![Einzelansicht eines Demo-Bildes mit einer Bewertung von drei Sternen](docs/screenshots/einzelansicht.jpg)
+![A demo photo in the viewer with a three-star rating](docs/screenshots/einzelansicht.jpg)
 
-## Entstehung und Lizenz
+## Origins and license
 
-Lichtblick ist eine vollständig KI-generierte, „vibe coded“ App, umgesetzt als native Anwendung in **Swift und SwiftUI**. Der Hinweis auf die KI-Entstehung bezieht sich auf den eigenen Projektcode, nicht auf die eingebundenen Drittbibliotheken.
+Lichtblick is a fully AI-generated, “vibe coded” app implemented natively in **Swift and SwiftUI**. The statement about AI generation applies to the original project code, not to the third-party libraries it uses.
 
-Der eigene Projektcode wird unter der **PolyForm Noncommercial License 1.0.0** veröffentlicht. Nichtkommerzielle Nutzung, Änderungen, eigene darauf aufbauende Projekte und Weitergabe sind nach deren Bedingungen erlaubt. Verkauf, kostenpflichtige Angebote und andere kommerzielle Verwertungen sind durch diese Lizenz nicht gestattet. Bei der Weitergabe müssen der Lizenztext beziehungsweise dessen URL und die vorgeschriebenen Hinweise erhalten bleiben. Maßgeblich ist der vollständige [Lizenztext](LICENSE.md), einschließlich seiner Regelungen für nichtkommerzielle Organisationen.
+The original project code is published under the **PolyForm Noncommercial License 1.0.0**. Noncommercial use, modifications, derivative projects and redistribution are permitted under its terms. Sales, paid services and other commercial uses are not permitted by this license. Redistribution must retain the license text or its URL and the required notices. The full [license text](LICENSE.md), including its provisions for noncommercial organizations, is authoritative.
 
 Required Notice: Copyright 2026 Dominic Wegmann
 
-Diese Lizenz gilt für die eigenen Projektbestandteile, soweit daran entsprechende Rechte bestehen. Drittbibliotheken, deren Quellcode und Lizenztexte behalten ihre jeweiligen Lizenzen; die nichtkommerzielle Beschränkung dieses Projekts schränkt deren eigenständige Rechte nicht ein. Die Hinweise und Lizenztexte zu AMSMB2 und libsmb2 stehen in [OpenSourceLicenses.txt](SMBRating/Resources/OpenSourceLicenses.txt).
+This license applies to the original project components to the extent that the relevant rights exist. Third-party libraries, their source code and their license texts retain their own licenses; this project's noncommercial restriction does not limit their independent rights. Notices and license texts for AMSMB2 and libsmb2 are in [OpenSourceLicenses.txt](SMBRating/Resources/OpenSourceLicenses.txt).
 
-Der Quellcode ist damit öffentlich einsehbar und nichtkommerziell weiterverwendbar („source available“); die kommerzielle Einschränkung macht diese Veröffentlichung nicht zu Open Source im Sinne der OSI.
+The source code is publicly available for noncommercial reuse (“source available”); its commercial restriction means this release is not open source as defined by the OSI.
 
-## Starten
+## Getting started
 
-1. `SMBRating.xcodeproj` in Xcode öffnen. Das Schema heißt **SMBRating**, die App **Lichtblick**.
-2. Xcode lädt die festgelegte SMB-Bibliothek AMSMB2 **4.0.3** automatisch.
-3. Einen iPad-Simulator oder ein angeschlossenes iPad auswählen. Für ein echtes Gerät unter **Signing & Capabilities** das eigene Development Team und gegebenenfalls eine eigene Bundle-ID einstellen.
-4. App starten und **Demobibliothek öffnen** oder **Mit SMB-Server verbinden** wählen. Die Demo enthält generierte Landschaftsillustrationen; ihre Änderungen existieren nur im Arbeitsspeicher.
+1. Open `SMBRating.xcodeproj` in Xcode. The scheme is **SMBRating** and the app is **Lichtblick**.
+2. Xcode automatically downloads the pinned SMB library, AMSMB2 **4.0.3**.
+3. Select an iPad simulator or a connected iPad. For a physical device, select your own development team and, if necessary, your own bundle identifier under **Signing & Capabilities**.
+4. Run the app and choose **Open demo library** or **Connect to SMB server**. The demo contains generated landscape illustrations; changes exist only in memory.
 
-Zum lokalen Prüfen ist zusätzlich Mac Catalyst aktiviert. Das Hauptziel bleibt iPadOS. In Xcode **My Mac (Mac Catalyst)** auswählen und mit **⌘R** starten.
+Mac Catalyst is also enabled for local testing. The primary target remains iPadOS. In Xcode, select **My Mac (Mac Catalyst)** and run with **⌘R**.
 
-## Verbindung
+## Language
 
-- Server: `nas.local`, `192.168.1.10` oder `smb://nas.local`; ein optionaler Port ist erlaubt.
-- Freigabe: beispielsweise `Fotos`, separat vom Server eingeben.
-- Startordner: optional, beispielsweise `Urlaub/2026`, relativ zur Freigabe.
-- Benutzername, Passwort und optional Domäne; leerer Benutzername verwendet `guest`.
-- Optional SMB-3-Verschlüsselung verlangen. Ohne diese Option wird keine Verschlüsselung garantiert. SMB 1 wird nicht verwendet.
+The app supports **English and German** and follows the preferred device or app language. English is the fallback for other languages. On iPad, you can choose a language under **Settings → Apps → Lichtblick → Language** when iPadOS offers multiple preferred languages. Menus, status messages, dialogs, errors, VoiceOver labels and the local network permission explanation are translated. Your own filenames and folder names, as well as the demo filenames, remain unchanged.
 
-Server und iPad müssen sich erreichen können, beispielsweise im selben LAN oder über VPN. Den iPadOS-Dialog für lokalen Netzwerkzugriff erlauben. Das Passwort wird auf Wunsch im gerätegebundenen Schlüsselbund gespeichert; die übrigen Verbindungsdaten liegen in den lokalen App-Einstellungen. Host, Freigabe und die übrigen Verbindungsfelder werden bereits bei der Eingabe lokal gemerkt und beim erneuten Öffnen des Dialogs wieder eingesetzt – auch ohne erfolgreichen Verbindungsaufbau. Dieser Entwurf ist von einer laufenden Verbindung getrennt; ein Passwort ist darin nicht enthalten.
+## Connection
 
-Erfolgreiche SMB-Verbindungen erscheinen unter **Gespeicherte Verbindungen** in der Seitenleiste. Für jede Verbindung wird der zuletzt geöffnete Ordner nach jedem Ordnerwechsel gespeichert. Beim nächsten App-Start wird die zuletzt aktive Verbindung mit diesem Ordner wiederhergestellt. Ist ein gemerktes Passwort im Schlüsselbund zugänglich, erfolgt der Verbindungsaufbau automatisch; andernfalls erscheint der vorausgefüllte Dialog zur Passworteingabe. Passwörter werden pro Verbindung getrennt gespeichert. Ein nicht mehr vorhandener oder nicht mehr zugänglicher letzter Ordner führt mit einem Hinweis zur Freigabenwurzel zurück.
+- Server: `nas.local`, `192.168.1.10` or `smb://nas.local`; an optional port is supported.
+- Share: for example, `Photos`, entered separately from the server.
+- Starting folder: optional, for example, `Holiday/2026`, relative to the share.
+- Username, password and optional domain; leaving the username blank uses `guest`.
+- Optionally require SMB 3 encryption. Encryption is not guaranteed without this option. SMB 1 is not used.
 
-Ein Klick auf einen Eintrag in der Seitenleiste stellt diese Verbindung samt ihrem letzten Ordner wieder her. **Verbindung trennen** beendet die automatische Wiederherstellung für den nächsten Start; die gespeicherten Verbindungen bleiben auswählbar. Auch die Demo merkt sich ihren letzten Ordner, ihre Bewertungen bleiben jedoch nur bis zum App-Ende erhalten. Die zuvor gespeicherte einzelne SMB-Verbindung wird beim ersten Start dieser Version automatisch übernommen; ihr Ordner wird ab jetzt bei der Navigation mitgeführt.
+The server and iPad must be able to reach each other, for example over the same LAN or a VPN. Allow the iPadOS local network permission prompt. The password can optionally be saved in the device-bound Keychain; other connection settings are stored in the app's local preferences. The host, share and other connection fields are saved locally as you type and restored when you reopen the dialog, even if the connection did not succeed. This draft is separate from the active connection and does not contain a password.
 
-Wenn der Schlüsselbund nicht verfügbar ist, bleibt die SMB-Verbindung trotzdem nutzbar. Ein Hinweis erklärt, dass das eingegebene Passwort nur für die laufende Sitzung verwendet wird. Falls das Löschen eines früher gespeicherten Passworts scheitert, wird dies ausdrücklich gemeldet. Bei einem lokal signierten Mac-Catalyst-Build kann der Schlüsselbundzugriff mit `-34018` scheitern: Zum dauerhaften Speichern unter **Signing & Capabilities** ein eigenes Apple-Development-Team einstellen und die App neu bauen. Siehe [Apples Erklärung zum Fehler -34018](https://developer.apple.com/forums/thread/114456).
+Successful SMB connections appear under **Saved connections** in the sidebar. Each connection's last opened folder is saved whenever you navigate to another folder. At the next launch, the most recent connection and its folder are restored. If its saved password is accessible in Keychain, the app connects automatically; otherwise, it shows the prefilled connection dialog for password entry. Passwords are stored separately for each connection. If the last folder no longer exists or cannot be accessed, the app opens the share root and displays a notice.
 
-## Bilder und Bewertungen
+Selecting a sidebar entry restores that connection and its last folder. **Disconnect** disables automatic restoration at the next launch; saved connections remain available. The demo also remembers its last folder, but its ratings last only until the app closes. The previously stored single SMB connection is migrated automatically on the first launch of this version; its folder is now tracked as you navigate.
 
-Laufende Bild-, Bewertungs- und Ordnerlesungen nutzen die von iPadOS gewährte Hintergrundzeit, wenn zu einer anderen App gewechselt oder das iPad gesperrt wird. Große, im Vordergrund gestartete Bewertungsprüfungen (ab 100 Bildern) beantragen ab iPadOS 26 zusätzlich einen fortlaufenden Hintergrundauftrag mit System-Fortschrittsanzeige. Bei Ablehnung bleibt die kürzere UIKit-Hintergrundzeit verfügbar. Endet die gewährte Zeit, warten offene Lesevorgänge bis zur Rückkehr in die App und werden dort wiederholt; bereits ermittelte Filtertreffer und der laufende Ordnersuchlauf bleiben im Arbeitsspeicher erhalten. Abbrechen, Filterwechsel und Verbindungswechsel beenden die zugehörigen wartenden Vorgänge. Ratings werden weiterhin nur für die laufende Ansicht gehalten und bei einem neuen Prüflauf frisch gelesen; auf der Festplatte liegen ausschließlich Vorschaubilder. Hintergrunddauer und Netzwerkzugriff bestimmt iPadOS. Ein erzwungenes Schließen oder Beenden durch das System beendet die laufende Arbeit; sie wird nicht als dauerhafter Auftrag gespeichert.
+The SMB connection remains usable if Keychain is unavailable. A notice explains that the entered password is only used for the current session. Failure to delete a previously saved password is also reported explicitly. A locally signed Mac Catalyst build may encounter Keychain error `-34018`: select your own Apple Development team under **Signing & Capabilities** and rebuild to save passwords permanently. See [Apple's explanation of error -34018](https://developer.apple.com/forums/thread/114456).
 
-- Sobald nach dem Verbinden oder beim Wiederherstellen der letzten Sitzung ein Ordner geöffnet ist, ist die Seitenleiste standardmäßig eingeklappt. Über das Seitenleisten-Symbol oben links lässt sie sich ein- und ausklappen. Eine anschließend manuell eingeblendete Seitenleiste bleibt beim weiteren Navigieren und Neuladen geöffnet. Der Button bleibt auch bei eingeklappter Seitenleiste erreichbar; in schmalen Fenstern lässt sich die Seitenleiste über denselben Button im Kopfbereich wieder schließen.
-- Die Übersicht trennt **Ordner** und **Bilder** in eigene Bereiche mit jeweiliger Anzahl. Beide Bereiche lassen sich unabhängig über ihre Überschrift ein- und ausklappen. Der Bilderbereich merkt sich seine Auswahl nach einem Neustart; der Ordnerbereich startet bei jedem Ordnerwechsel ausgeklappt. Leere Bereiche werden ausgeblendet. Ordnerkacheln öffnen die jeweiligen Unterordner, Bilder erscheinen in einem anpassbaren Raster mit lokal erzeugten Vorschaubildern. Bei eingeklapptem Bilderbereich pausiert das Vorladen. Der Pfeil nach oben führt zum übergeordneten Ordner; die anklickbare Pfadleiste springt direkt zu einem Vorfahren oder zur Freigabe zurück. Auch von einem angegebenen Startordner ist die Freigabenwurzel erreichbar.
-- Beim Scrollen werden bis zu zwölf weitere Vorschauen vor und hinter den sichtbaren Bildkacheln vorgeladen. Sichtbare Bilder haben Vorrang; entfernte Vorladeaufträge werden abgebrochen. Suche und Sortierung bestimmen dabei auch die Vorladereihenfolge.
-- Ausschließlich verkleinerte Vorschaubilder werden lokal im App-Cache gespeichert und bei erneutem Öffnen wiederverwendet. Ratings und andere Originalmetadaten werden bei jedem Laden frisch vom Server gelesen, auch bei Treffern im Arbeitsspeicher- oder Festplatten-Cache. Die Vorschau erscheint bereits währenddessen; bis zum Abschluss steht dort „Bewertung wird geladen …“. Bei einem Lesefehler wird keine alte Bewertung als aktuell angezeigt. Der bisherige Cache mit gespeicherten Metadaten wird beim ersten Start dieser Version entfernt. Der Cache ist nach Server, Freigabe, Benutzer und Dateipfad getrennt; Dateigröße und Änderungszeit bestimmen seine Gültigkeit. Ohne Änderungszeit vom Server wird nur im Arbeitsspeicher gecached. Die Demo verwendet ebenfalls nur den Arbeitsspeicher.
-- Suche nach Dateinamen und natürliche Sortierung, auf- oder absteigend.
-- Das Filter-Symbol oben rechts bietet **Alle Bewertungen**, **Ohne Bewertung**, genau **1–5 Sterne** und **Abgelehnt**. Der Filter gilt für die aktuelle Ansicht, bei eingeschalteter Unterordneroption auch für deren Bilder, und lässt sich mit der Dateinamensuche kombinieren. Ordner bleiben zur Navigation sichtbar. Für jede neue Filterauswahl, Suche und jedes Neuladen werden die Bewertungen frisch gelesen; die Ergebnisse gelten nur für die laufende Ansicht und werden nicht dauerhaft gespeichert. Passende Bilder erscheinen bereits während der Prüfung und werden nach und nach ergänzt. Eine kleine Statuszeile zeigt den Fortschritt; die Übersicht bleibt benutzbar und bietet **Abbrechen** an. Nicht lesbare Bewertungen werden gemeldet und niemals als null Sterne behandelt. **Erneut prüfen** beziehungsweise **Bewertungen erneut lesen** wiederholt die Prüfung. **Filter entfernen** stellt die vollständige aktuelle Ansicht wieder her. Die Einzelansicht blättert durch die gefilterte Bildmenge; geänderte Bewertungen aktualisieren die Zugehörigkeit zur Übersicht.
-- Unter **Ansicht anpassen** (Regler-Symbol oben rechts) die Sortierung **Dateiname aufsteigend/absteigend** auswählen. Sie gilt für Bilder und Ordner, wobei Ordner weiterhin zuerst erscheinen.
-- Ebenfalls dort zwischen **Ausschnitt anzeigen** (bisherige, kachelfüllende Vorschau) und **Ganzes Bild anzeigen** wechseln. Bei der vollständigen Ansicht wird das Seitenverhältnis beibehalten; freie Flächen werden mit dem Kachelhintergrund gefüllt. Vorschaugröße, Darstellung und Sortierung bleiben nach einem Neustart erhalten.
-- Einzelansicht mit Wischen, Vor-/Zurück-Tasten, Pinch-Zoom und Doppeltipp-Zoom. Nach unten wischen kehrt zur Übersicht zurück; im vergrößerten Bild verschiebt dieselbe Geste weiterhin das Bild. Während des Speicherns, Verschiebens oder Löschens ist die Rückkehr gesperrt. Beim Bildwechsel gleitet das aktuelle Bild sichtbar zur Seite hinaus, während das nächste beziehungsweise vorherige Bild passend zur Wischrichtung hereinkommt. Eine unabhängige Momentaufnahme hält das ausgehende Bild bis zum Ende der Bewegung sichtbar, auch wenn das nächste Original noch lädt. Die beiden benachbarten Vorschaubilder werden vorbereitet, während Originaldatei und Rating weiterhin frisch geladen werden; bis dahin sind Bewertungen gesperrt. Bei aktivierter Bedienungshilfe **Bewegung reduzieren** wird stattdessen kurz übergeblendet. Im Zoom verschiebt eine Wischbewegung weiterhin das aktuelle Bild.
-- Mit externer Tastatur: Pfeiltasten blättern, `1` bis `5` bewerten, `0` entfernt die Bewertung, Escape schließt die Einzelansicht.
-- Sterne werden direkt als **`xmp:Rating`** im eingebetteten XMP-Paket gespeichert. `0` bedeutet unbewertet. Bereits vorhandenes `-1` wird als abgelehnt angezeigt; die App vergibt selbst `0…5`.
-- Lesen: XMP hat Vorrang, IPTC-StarRating dient als Fallback. Image I/O stellt XMP-Ratings auch über die IPTC-StarRating-Eigenschaft bereit. Es gibt deshalb keinen separaten, möglicherweise widersprüchlichen IPTC-Schreibmodus und keine Sidecar-Dateien.
-- JPEG, PNG, HEIC/HEIF und einseitige TIFF-Dateien werden nur über die verlustfreie Image-I/O-Kopierfunktion geändert. Falls das konkrete Format nicht unterstützt wird, erscheint eine Fehlermeldung; es gibt keinen Fallback auf erneute Bildkompression.
-- Andere gängige Bild- und RAW-Endungen werden zur Ansicht angeboten, soweit das jeweilige iPadOS sie decodieren kann. RAWs, Animationen und mehrseitige Bilder bleiben schreibgeschützt.
+## Photos and ratings
 
-Die Grid-Bewertungen werden frisch aus den Originaldateien gelesen, unabhängig vom Vorschaucache. Unter **Ansicht anpassen → Unterordner einbeziehen** lässt sich die Übersicht auf alle Bilder im aktuellen Ordner und seinen Unterordnern erweitern. Die Option gilt nur für die aktuelle Ansicht und klappt beim Aktivieren den Ordnerbereich ein. Beim Wechsel in einen anderen Ordner, beim erneuten Verbinden und nach einem Neustart ist sie wieder deaktiviert und der Ordnerbereich ausgeklappt. **Neu laden** im selben Ordner behält die Option bei. Unter den Bildern steht dann ihr relativer Ordner; gleichnamige Dateien bleiben getrennt. Ordnerkacheln navigieren weiterhin in die direkten Unterordner. Die Suche nach Bildern ist abbrechbar. Versteckte Ordner und symbolische Verzeichnisverknüpfungen werden nicht durchsucht. Falls ein Ordner nicht gelesen werden kann, meldet die App dessen Pfad und behält die bisherige Ansicht bei. **Neu laden** verwirft den Vorschaucache des Ordners und liest externe Änderungen erneut ein.
+Active photo, rating and folder reads use the background time granted by iPadOS when you switch apps or lock the iPad. On iPadOS 26 and later, large rating scans started in the foreground (100 or more photos) also request a continued background processing task with a system progress indicator. If that request is denied, the shorter UIKit background time remains available. When the granted time runs out, pending reads wait until you return to the app and are retried there; completed filter matches and the ongoing folder search remain in memory. Cancellation, filter changes and connection changes end their associated pending operations. Ratings are kept only for the current view and read afresh for each new scan; only thumbnails are stored on disk. iPadOS determines background time and network availability. Force-quitting or system termination ends the work; it is not saved as a persistent job.
 
-Die Demobibliothek enthält zusätzlich die verschachtelten Ordner **Landschaften → Auswahl**, um die Navigation ohne SMB-Server auszuprobieren.
+- Once a folder opens after connecting or restoring the last session, the sidebar is collapsed by default. Use the sidebar icon at the top left to show or hide it. If you manually show it, it stays open while navigating or reloading. The button remains accessible when the sidebar is collapsed; in narrow windows, the same button in the header closes the sidebar again.
+- The library separates **Folders** and **Photos** into sections, each with a count. Both can be expanded or collapsed independently using their headings. The photo section remembers its state across launches; the folder section starts expanded when changing folders. Empty sections are hidden. Folder tiles open subfolders, while photos appear in an adjustable grid with locally generated thumbnails. Collapsing the photo section pauses preloading. The up arrow opens the parent folder; the clickable breadcrumb jumps directly to an ancestor or the share root. The share root remains accessible even when a starting folder was specified.
+- While scrolling, up to twelve additional thumbnails before and after the visible photo tiles are preloaded. Visible photos take priority; distant preload requests are cancelled. Search and sorting also determine preload order.
+- Only reduced thumbnails are stored in the local app cache and reused on subsequent visits. Ratings and other original metadata are read afresh from the server every time, including when a thumbnail is available in memory or on disk. The thumbnail appears while the app shows “Loading rating …”. If reading fails, an old rating is never shown as current. The previous cache containing stored metadata is removed on the first launch of this version. Cache entries are separated by server, share, username and file path; file size and modification time determine validity. Without a server modification time, only memory caching is used. The demo also uses memory only.
+- Search by filename and use natural sorting in ascending or descending order.
+- The filter icon at the top right offers **All ratings**, **Unrated**, exactly **1–5 stars**, and **Rejected**. The filter applies to the current view, including photos from subfolders when that option is enabled, and can be combined with filename search. Folders remain visible for navigation. Ratings are read afresh whenever you change the filter or search, or reload; results apply only to the current view and are not stored permanently. Matching photos appear progressively during the scan. A small status line shows progress; the library stays usable and provides **Cancel**. Unreadable ratings are reported and never treated as zero stars. **Check again** or **Read ratings again** repeats the scan. **Remove filter** restores the full current view. The photo viewer navigates through the filtered set; changing a rating updates whether that photo belongs in the library view.
+- Under **View options** (the sliders icon at the top right), choose **Filename ascending/descending**. Sorting applies to both photos and folders, with folders shown first.
+- The same menu switches between **Fill thumbnails** (the original tile-filling crop) and **Fit thumbnails**. Fit preserves the full aspect ratio and fills unused areas with the tile background. Thumbnail size, display mode and sort order persist across launches.
+- The photo viewer supports swiping, previous/next buttons, pinch zoom and double-tap zoom. Swipe down to return to the library; while zoomed in, the same gesture pans the image. Returning is blocked while saving, moving or deleting. When navigating, the current image visibly slides out and the next or previous image slides in from the corresponding direction. An independent snapshot keeps the outgoing image visible until the transition ends, even if the next original is still loading. Neighboring thumbnails are prepared in advance, while the original file and rating are always loaded afresh; rating controls stay disabled until loading completes. With **Reduce Motion** enabled, the app uses a short crossfade instead. When zoomed in, swiping continues to pan the current photo.
+- With an external keyboard: arrow keys navigate, `1` to `5` assign stars, `0` removes the rating, and Escape closes the viewer.
+- Stars are written directly as **`xmp:Rating`** in the embedded XMP packet. `0` means unrated. An existing `-1` is shown as rejected; the app itself assigns `0…5`.
+- Reading: XMP takes precedence, with IPTC-StarRating as a fallback. Image I/O also exposes XMP ratings through the IPTC-StarRating property. There is therefore no separate, potentially conflicting IPTC writing mode and no sidecar files.
+- JPEG, PNG, HEIC/HEIF and single-page TIFF files are changed only through Image I/O's lossless image-source copy function. If the particular format is unsupported, an error is shown; there is no fallback to recompressing the image.
+- Other common image and RAW extensions are available for viewing when the installed iPadOS version can decode them. RAW files, animations and multipage images remain read-only.
 
-## Dateien verschieben
+Grid ratings are read afresh from the original files independently of the thumbnail cache. Under **View options → Include subfolders**, you can extend the library to all photos in the current folder and its subfolders. This option applies only to the current view and collapses the folder section when enabled. Changing folders, reconnecting or relaunching disables it and expands the folder section again. **Reload folder** in the same folder preserves the option. Each photo then shows its relative folder; files with identical names remain separate. Folder tiles still open direct subfolders. The photo search can be cancelled. Hidden folders and symbolic directory links are not traversed. If a folder cannot be read, the app reports its path and keeps the previous view. **Reload folder** clears that folder's thumbnail cache and reads external changes again.
 
-In der Übersicht ein Vorschaubild lange drücken beziehungsweise auf dem Mac rechtsklicken und **Datei verschieben** wählen. In der Einzelansicht öffnet das Ordner-Symbol oben rechts dieselbe Ordnerauswahl. Über Unterordner, **Übergeordneter Ordner** und die Freigabenwurzel zum gewünschten Ziel navigieren und **Hierher verschieben** wählen. Die Auswahl startet im tatsächlichen Quellordner des Bildes, auch in der Ansicht mit einbezogenen Unterordnern. **Abbrechen** lässt die Datei unverändert.
+The demo library includes nested **Landschaften → Auswahl** folders so that you can try navigation without an SMB server.
 
-Verschieben ist innerhalb derselben SMB-Freigabe möglich. Dateiname, Bilddaten und eingebettete Bewertungen bleiben erhalten; die App verschiebt die Datei direkt auf dem Server, ohne sie herunterzuladen und erneut hochzuladen. Der Quellordner ist als Ziel gesperrt. Vorhandene gleichnamige Dateien oder Ordner werden nicht überschrieben; die serverseitige Umbenennung schützt auch vor einem Eintrag, der erst nach der Zielauswahl angelegt wird. Dafür benötigt der SMB-Benutzer die entsprechenden Rechte in Quell- und Zielordner. Ordner und symbolische Verknüpfungen werden nicht verschoben.
+## Moving files
 
-Nach erfolgreicher Prüfung aktualisiert sich die Übersicht. Bei einbezogenen Unterordnern bleibt das Bild unter seinem neuen Pfad sichtbar, sofern das Ziel weiterhin im angezeigten Unterbaum liegt. In der Einzelansicht geht es zum nächsten beziehungsweise vorherigen Bild; nach dem letzten Bild öffnet sich die Übersicht. Während des Verschiebens sind weitere Änderungen gesperrt. Die Zielauswahl ändert weder den geöffneten Bibliotheksordner noch die Option **Unterordner einbeziehen**.
+In the library, long-press a thumbnail, or right-click on Mac, and choose **Move file**. In the viewer, the folder icon at the top right opens the same destination picker. Navigate using subfolders, **Parent folder** and the share root, then choose **Move here**. The picker starts in the photo's actual source folder, including when subfolders are included in the view. **Cancel** leaves the file unchanged.
 
-Falls die Serverantwort oder die anschließende Prüfung fehlschlägt, zeigt die App Quell- und Zielpfad an und fordert zum Neuladen auf. Sie wiederholt den Verschiebevorgang nicht automatisch. In der Demo gilt das Verschieben nur bis zum erneuten Öffnen der Demobibliothek.
+Files can be moved within the same SMB share. The filename, image data and embedded ratings are preserved; the app moves the file directly on the server without downloading and uploading it again. The source folder cannot be chosen as the destination. Existing files or folders with the same name are not overwritten; the server-side rename also protects against an item created after destination selection. The SMB user needs the appropriate permissions in both folders. Folders and symbolic links are not moved.
 
-## Dateien löschen
+After successful verification, the library updates. When subfolders are included, the photo remains visible at its new path if the destination is still within the displayed subtree. In the viewer, navigation continues with the next or previous photo; after the last photo, the library opens. Other changes are blocked while moving. Picking a destination changes neither the library's current folder nor the **Include subfolders** option.
 
-In der Übersicht ein Vorschaubild lange drücken beziehungsweise auf dem Mac rechtsklicken und **Datei löschen** wählen. In der Einzelansicht gibt es dafür einen Papierkorb oben rechts. Vor jedem Löschvorgang erscheint eine Bestätigung mit dem Dateinamen, bei SMB auch mit Server, Freigabe und Pfad. **Abbrechen** oder das Schließen des Dialogs lässt die Datei unverändert.
+If the server response or subsequent verification fails, the app shows the source and destination paths and asks you to reload. It does not automatically repeat the move. In the demo, moves last only until the demo library is reopened.
 
-Erst nach Bestätigung wird die Datei direkt auf der SMB-Freigabe gelöscht. Die App verwendet keinen Papierkorb und bietet kein Rückgängigmachen an. Dafür benötigt der SMB-Benutzer Löschrechte. Während des Vorgangs sind weitere Änderungen gesperrt. Bei Erfolg verschwinden Datei und Bewertung aus der Übersicht. In der Einzelansicht wird das nächste Bild gezeigt, am Ende das vorherige; nach dem letzten Bild öffnet sich die Übersicht. Ordner werden über diese Funktion nicht gelöscht.
+## Deleting files
 
-Bei Fehlern bleibt die Datei in der Ansicht; ein Hinweis fordert zum Neuladen auf, um den tatsächlichen Serverzustand zu prüfen. In der Demo betrifft das Löschen nur die laufende Demobibliothek: Beim erneuten Öffnen der Demo werden die Beispielbilder wiederhergestellt.
+In the library, long-press a thumbnail, or right-click on Mac, and choose **Delete file**. In the viewer, use the trash icon at the top right. Every deletion requires confirmation showing the filename and, for SMB files, the server, share and path. **Cancel** or dismissing the dialog leaves the file unchanged.
 
-## Schreiben auf die Freigabe
+Only after confirmation is the file deleted directly from the SMB share. The app does not use a trash folder or provide undo. The SMB user needs delete permission. Other changes are blocked during deletion. On success, the file and its rating disappear from the library. The viewer shows the next photo, or the previous one at the end; after the final photo, the library opens. This function does not delete folders.
 
-Zum Bewerten werden Lese-, Schreib-, Lösch- und Umbenennrechte im jeweiligen Ordner benötigt. Die App:
+On error, the file remains in the view and a notice asks you to reload to check the server's actual state. In the demo, deletion affects only the current demo session: reopening the demo library restores its sample photos.
 
-1. vergleicht die aktuelle Serverdatei mit der in der Einzelansicht geladenen Originaldatei;
-2. erstellt lokal eine Kopie mit aktualisierten XMP-Metadaten;
-3. schreibt eine eindeutige `.smbrating-….tmp`-Datei in denselben Ordner und prüft sie durch vollständiges Zurücklesen;
-4. prüft das Original erneut, benennt es in `.smbrating-….backup` um und prüft auch diese Sicherung;
-5. benennt die geprüfte temporäre Datei auf den ursprünglichen Dateinamen um, liest sie zur Kontrolle zurück und entfernt anschließend die Sicherung.
+## Writing to the share
 
-Bei einem klar erkennbaren Fehler versucht sie, das Original zurückzubenennen. Bei unklarem Netzwerkzustand bleiben Sicherungsdateien zur manuellen Wiederherstellung bestehen; der genaue Pfad wird angezeigt. Eine fehlgeschlagene Sicherungsbereinigung wird ebenfalls gemeldet. Die App führt beim nächsten Start bewusst keine automatische Bereinigung solcher Dateien durch.
+Rating requires read, write, delete and rename permissions in the folder. The app:
 
-Dieser Ablauf ist keine serverseitige Transaktion. Nicht gleichzeitig in anderen Programmen dieselbe Datei bearbeiten. Ein Abbruch genau zwischen den Umbenennungen kann eine Wiederherstellung aus der versteckten Sicherungsdatei erfordern. Dateisystemattribute, ACLs und alternative SMB-Datenströme werden beim Erstellen der Ersatzdatei nicht kopiert; der ursprüngliche Dateiname und die Bildmetadaten werden beibehalten.
+1. Compares the current server file with the original loaded in the viewer.
+2. Creates a local copy with updated XMP metadata.
+3. Writes a unique `.smbrating-….tmp` file in the same folder and verifies it by reading it back completely.
+4. Checks the original again, renames it to `.smbrating-….backup` and verifies that backup too.
+5. Renames the verified temporary file to the original filename, reads it back for verification and then removes the backup.
 
-## Grenzen und Prüfung
+When a failure is unambiguous, the app attempts to rename the original back into place. If the network state is uncertain, backup files remain for manual recovery and their exact paths are displayed. Failure to clean up a backup is also reported. The app deliberately does not clean up these files automatically at its next launch.
 
-Bei großen Bibliotheken werden Suche, natürliche Sortierung und Positionsindex nur bei Änderungen der Dateiliste, Suche oder Sortierung neu aufgebaut. Scrollereignisse aktualisieren ausschließlich den Vorladecontroller; dieser bündelt Ereignisse einer Bildzeile für 80 ms und bestimmt das nächste Vorladefenster über den Positionsindex. Das Laden einer Kachel ohne vorhandene Bewertungsüberschreibung veröffentlicht keine globale Zustandsänderung. Die Bewertungszeile bleibt beim Nachladen gleich hoch, damit Bildzeilen nicht springen. Ratings werden weiterhin frisch gelesen und nicht gecached. Bei einer neuen Suche oder Sortierung beginnt die Übersicht wieder oben.
+This workflow is not a server-side transaction. Do not edit the same file in other apps at the same time. An interruption precisely between renames may require recovery from the hidden backup file. File system attributes, ACLs and alternate SMB data streams are not copied when the replacement file is created; the original filename and image metadata are preserved.
 
-Beim ersten Laden einer Vorschau wird die ganze Datei übertragen. Für die Vorschau genügt danach bei unverändertem Dateistand der lokale Cache. Die Metadaten werden unabhängig davon frisch gelesen; aktuell erfordert dies weiterhin die Übertragung der Originaldatei. Maximal drei Bildladevorgänge laufen gleichzeitig, davon pro Vorladefenster nur ein spekulativer Vorgang; überlappende Vorschauanfragen teilen sich einen Ladeauftrag. Der Arbeitsspeicher-Cache ist auf etwa 80 MB begrenzt und bleibt beim Ordnerwechsel erhalten. Der Festplatten-Cache enthält nur Bilddaten von Vorschauen mit maximal 520 Pixeln Kantenlänge, keine Ratings, Originalmetadaten oder Originaldateien; er ist über alle Verbindungen auf 256 MB begrenzt und entfernt die am längsten unbenutzten Einträge zuerst. Das Betriebssystem darf diesen Cache ebenfalls löschen. Bewerten und Löschen verwerfen die betroffenen Cache-Einträge, **Neu laden** erzwingt frische Vorschauen der aufgelisteten Bilder. Dateien über 128 MB werden abgewiesen. Die große Ansicht verwendet eine Vorschau mit maximal 3200 Pixeln Kantenlänge; zum Bewerten wird die Originaldatei weiterhin frisch vom Server gelesen.
+## Limits and validation
 
-Die Tests prüfen Sterne und wiederholte Änderungen, Pixel- und Metadatenerhalt, JPEG/PNG/TIFF/HEIC, Konflikte, beschädigte Uploads, fehlende Rechte, Wiederherstellung, verlorene Antworten auf SMB-Umbenennungen, nicht blockierende Schlüsselbundfehler beim Speichern und Löschen sowie die dauerhafte Speicherung mehrerer Verbindungen, ihrer Ordner und die Übernahme alter Verbindungsdaten sowie rekursive Ordnerlisten, gleichnamige Bilder, Unterbaumgrenzen, ausgelassene versteckte Ordner und Verknüpfungen, Lesefehler und Abbruch:
+For large libraries, search, natural sorting and the position index are rebuilt only when the file list, search or sort order changes. Scroll events update only the preloading controller, which coalesces events from a photo row for 80 ms and uses the position index to find the next preload window. Loading a tile without an existing rating override does not publish a global state change. The rating row keeps a fixed height during loading to avoid shifting image rows. Ratings are still read afresh and are not cached. A new search or sort order returns the library to the top.
+
+The entire file is transferred when a thumbnail is first loaded. After that, the local thumbnail cache can be used if the file is unchanged. Metadata is read afresh independently, which currently still requires transferring the original file. At most three image loads run concurrently, including at most one speculative request per preload window; overlapping thumbnail requests share a single load. The memory cache is limited to about 80 MB and survives folder changes. The disk cache contains only thumbnail image data with a maximum edge length of 520 pixels, never ratings, original metadata or original files; it is limited to 256 MB across all connections and evicts the least recently used entries first. The operating system may delete this cache. Rating and deleting invalidate the affected cache entries; **Reload folder** forces fresh thumbnails for the listed photos. Files larger than 128 MB are rejected. The viewer uses a preview up to 3200 pixels on its longest edge; rating still reads the original file afresh from the server.
+
+Tests cover stars and repeated changes, preservation of pixels and metadata, JPEG/PNG/TIFF/HEIC, conflicts, corrupted uploads, missing permissions, recovery, lost responses to SMB renames, nonblocking Keychain errors on save and delete, and persistence of multiple connections, their folders and migration of old connection settings. They also cover recursive folder listings, duplicate filenames, subtree boundaries, skipped hidden folders and links, read failures and cancellation:
 
 ```sh
 swift test
 ```
 
-Simulator-Build ohne Signierung:
+Simulator build without signing:
 
 ```sh
 xcodebuild -project SMBRating.xcodeproj -scheme SMBRating \
   -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 ```
 
-Falls die Command Line Tools statt Xcode aktiv sind, `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` vor den jeweiligen Befehl setzen.
+If Command Line Tools are active instead of Xcode, prefix the command with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`.
 
-Acht zusätzliche Tests prüfen die Ausgabe erster Treffer vor Abschluss der übrigen Lesevorgänge, genaue Bewertungsfilter einschließlich fehlender und abgelehnter Bewertungen, das Zusammenspiel mit Suche und Sortierung, die Erhaltung der Ordnernavigation und Bildindizes, frische Wiederholungslesungen, Lesefehler, maximal drei parallele Lesevorgänge, Fortschritt und Abbruch.
+Eight additional tests check delivery of early matches before remaining reads finish, exact rating filters including missing and rejected ratings, interaction with search and sorting, preservation of folder navigation and photo indices, fresh repeated reads, read errors, at most three concurrent reads, progress and cancellation.
 
-Sieben Tests prüfen die Hintergrundsteuerung mit simulierten Systemfreigaben: Weiterlesen während der Freigabe, Pause bei Zeitablauf, Wiederaufnahme ohne erneutes Lesen fertiger Filtertreffer, Abbruch während der Pause und während aktiver Übertragungen, abgelehnte Freigaben, normale Lesefehler und verspätete oder veraltete Freigabeereignisse. Die tatsächliche Hintergrunddauer auf dem Gerät hängt von iPadOS ab.
+Seven tests check background coordination with simulated system grants: continuing reads during a grant, pausing at expiration, resuming without rereading completed filter matches, cancellation while paused and during active transfers, denied grants, normal read errors, and late or stale grant events. Actual background duration on a device depends on iPadOS.
 
-Vier zusätzliche Tests prüfen natürliche Sortierung und Suche, gleichnamige Dateien in unterschiedlichen Ordnern, den Positionsindex und Vorladefenster einer Bibliothek mit 1.200 Einträgen in beiden Sortierrichtungen. Die Oberfläche wurde in einer separaten Testkopie mit 1.203 Demo-Bildern beim Scrollen ans Listenende und zurück sowie beim Suchen und Öffnen eines Bildes geprüft. Ein isolierter Vergleich mit 1.200 Einträgen und 200 Scrollereignissen reduzierte die Zeit für wiederholtes Sortieren und die Fenstersuche von etwa 201 ms auf 0,6 ms für die indizierte Fenstersuche; dies ist keine Messung der Bildrate. Ein zusätzlicher Modelltest bestätigt, dass 2.400 wirkungslose Bewertungsbereinigungen keine globalen Ansichtsaktualisierungen auslösen.
+Four additional tests cover natural sorting and search, duplicate filenames in different folders, the position index and preload windows for a library with 1,200 entries in both sort directions. The UI was checked in a separate test copy with 1,203 demo photos by scrolling to the end and back, searching and opening a photo. An isolated comparison with 1,200 entries and 200 scroll events reduced time spent repeatedly sorting and finding windows from about 201 ms to 0.6 ms for indexed window lookup; this is not a frame-rate measurement. An additional model test confirms that 2,400 no-op rating cleanups do not trigger global view updates.
 
-Sieben zusätzliche Tests prüfen den dauerhaften Vorschaucache einschließlich reiner Bildspeicherung, Entfernung des alten Metadatencaches, Verbindungstrennung, Dateiversionen, Invalidierung, beschädigter Einträge, Größenlimit und Vorladefenster.
+Seven additional tests cover the persistent thumbnail cache, including image-only storage, removal of the old metadata cache, connection isolation, file versions, invalidation, corrupted entries, size limits and preload windows.
 
-Elf Tests prüfen das Verschieben einschließlich Erhalt der Datei, frisch gespeicherter Bewertungen mit geänderter Dateigröße, Freigabenwurzel als Ziel, ungültiger Pfade, fehlender Quelldateien, Namenskonflikten, fehlender Rechte, Abbruch und verlorener Serverantworten. Die Zustandswechsel der Übersicht wurden zusätzlich mit einem nachgebildeten Dateispeicher geprüft: direkte und rekursive Ansichten, Verschieben innerhalb beziehungsweise außerhalb des angezeigten Unterbaums, Cache- und Bewertungsbereinigung sowie veraltete Anfragen nach Verbindungswechseln. In der laufenden Mac-Catalyst-Demo wurden Kontextmenü, Zielauswahl, Abbrechen, Verschieben aus Übersicht und Einzelansicht, Erhalt einer unmittelbar zuvor gespeicherten Fünf-Sterne-Bewertung und die Rückkehr zur Übersicht nach dem letzten Bild geprüft.
+Eleven tests cover moving files, including preservation of the file, freshly saved ratings with a changed file size, the share root as a destination, invalid paths, missing sources, name conflicts, missing permissions, cancellation and lost server responses. Library state transitions were also checked with a mock store: direct and recursive views, moves within and outside the displayed subtree, cache and rating cleanup, and stale requests after connection changes. The running Mac Catalyst demo was used to check the context menu, destination picker, cancellation, moves from the library and viewer, preservation of a five-star rating saved immediately beforehand, and returning to the library after the final photo.
 
-Die Tests verwenden Image I/O auf macOS und einen nachgebildeten Dateispeicher. Die iPad-Simulator- und Apple-Silicon-Mac-Catalyst-Builds wurden geprüft. In der laufenden Mac-Catalyst-App wurden Raster, Einzelansicht, Speichern und erneutes Lesen einer Demo-Bewertung kontrolliert. Für die neuen Einstellungen wurden die Sortierung, die vollständige Bilddarstellung, die obere Ordnerausrichtung, gemerkte Formulareingaben und ein Neustart im verschachtelten Demo-Ordner geprüft. Der Löschablauf wurde in der Demo mit Abbrechen, bestätigtem Entfernen aus dem Raster, dem Wechsel zum nächsten Bild und der Rückkehr zur Übersicht nach dem letzten Bild geprüft. Die Installation und der erfolgreiche Prozessstart auf einem physischen iPad wurden ebenfalls geprüft. Die rekursive Demo-Ansicht wurde mit 9 Bildern in der Wurzel, 6 Bildern im Unterordner der gemeinsamen Einzelansicht, dem Ausschalten der Option geprüft. Ein vollständiger Test gegen einen echten SMB-Server steht noch aus.
+Four additional localization tests check completeness of both language tables, matching placeholders, formatted progress and deletion messages, and the local network permission explanation. The localized app was also checked in English and German in a separate Mac Catalyst test copy, including the English connection dialog and photo viewer.
 
-## Aufbau
+Tests use Image I/O on macOS and a mock file store. iPad Simulator and Apple Silicon Mac Catalyst builds have been checked. In the running Mac Catalyst app, the grid, viewer, saving and rereading a demo rating were verified. Checks for the view settings included sorting, fitting the full image, top-aligned folders, remembered form input and relaunching in a nested demo folder. The deletion workflow was checked in the demo, including cancellation, confirmed grid removal, navigating to the next photo and returning to the library after deleting the last photo. Installation and successful process launch on a physical iPad were also verified. The recursive demo view was checked with nine photos at the root, six photos in a subfolder sharing the same viewer navigation, and disabling the option. A complete test against a real SMB server is still outstanding.
 
-- `SMBRating/App`: App-Einstieg und Bibliothekszustand.
-- `SMBRating/Views`: Verbindung, Raster, Einzelansicht und Zoom.
-- `SMBRating/Services`: SMB-Adapter, Schlüsselbund, Bildpipeline und Demo.
-- `Sources/RatingCore`: Metadaten und abgesicherter Schreibablauf.
-- `Tests/RatingCoreTests`: Tests ohne SMB-Server.
+## Project structure
 
-Verwendete Schnittstellen: [AMSMB2](https://github.com/amosavian/AMSMB2/tree/4.0.3), [Apple Image I/O](https://developer.apple.com/documentation/imageio), [verlustfreies Kopieren von Bildquellen](https://developer.apple.com/documentation/imageio/cgimagedestinationcopyimagesource(_:_:_:_:)). Die Lizenztexte der SMB-Komponenten liegen in `SMBRating/Resources/OpenSourceLicenses.txt` und sind in der App unter **Über Bewertungen** zugänglich.
+- `SMBRating/App`: app entry point and library state.
+- `SMBRating/Views`: connection, grid, viewer and zoom.
+- `SMBRating/Services`: SMB adapter, Keychain, image pipeline and demo.
+- `SMBRating/Resources`: third-party notices and German/English localization tables.
+- `Sources/RatingCore`: metadata and the verified write workflow.
+- `Tests/RatingCoreTests`: tests without an SMB server, including localization checks.
+
+APIs used: [AMSMB2](https://github.com/amosavian/AMSMB2/tree/4.0.3), [Apple Image I/O](https://developer.apple.com/documentation/imageio), [lossless copying of image sources](https://developer.apple.com/documentation/imageio/cgimagedestinationcopyimagesource(_:_:_:_:)). License texts for the SMB components are in `SMBRating/Resources/OpenSourceLicenses.txt` and accessible in the app under **About ratings**.

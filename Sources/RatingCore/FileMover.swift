@@ -11,14 +11,14 @@ enum FileMoveError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidPath: return "Dieser Datei- oder Ordnerpfad kann nicht zum Verschieben verwendet werden."
-        case .sameFolder: return "Die Datei befindet sich bereits in diesem Ordner."
-        case .destinationExists: return "Im Zielordner gibt es bereits einen Eintrag mit diesem Namen. Es wurde nichts überschrieben."
-        case .sourceUnavailable: return "Die Quelldatei ist nicht mehr vorhanden oder kann nicht verschoben werden. Bitte die Übersicht neu laden."
-        case .verification: return "Quell- und Zielordner entsprechen nach dem Verschieben nicht dem erwarteten Stand."
-        case .staleRequest: return "Die Verbindung oder Dateiliste wurde geändert. Bitte die Datei erneut zum Verschieben auswählen."
+        case .invalidPath: return String(localized: "Dieser Datei- oder Ordnerpfad kann nicht zum Verschieben verwendet werden.")
+        case .sameFolder: return String(localized: "Die Datei befindet sich bereits in diesem Ordner.")
+        case .destinationExists: return String(localized: "Im Zielordner gibt es bereits einen Eintrag mit diesem Namen. Es wurde nichts überschrieben.")
+        case .sourceUnavailable: return String(localized: "Die Quelldatei ist nicht mehr vorhanden oder kann nicht verschoben werden. Bitte die Übersicht neu laden.")
+        case .verification: return String(localized: "Quell- und Zielordner entsprechen nach dem Verschieben nicht dem erwarteten Stand.")
+        case .staleRequest: return String(localized: "Die Verbindung oder Dateiliste wurde geändert. Bitte die Datei erneut zum Verschieben auswählen.")
         case let .notConfirmed(source, destination, reason):
-            return "Das Verschieben konnte nicht bestätigt werden. Bitte Quell- und Zielordner neu laden, um den aktuellen Stand zu prüfen.\n\nQuelle: \(source)\nZiel: \(destination)\n\n\(reason)"
+            return String(localized: "Das Verschieben konnte nicht bestätigt werden. Bitte Quell- und Zielordner neu laden, um den aktuellen Stand zu prüfen.\n\nQuelle: \(String(source))\nZiel: \(String(destination))\n\n\(String(reason))")
         }
     }
 }

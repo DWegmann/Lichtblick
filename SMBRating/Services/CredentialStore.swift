@@ -14,11 +14,11 @@ enum CredentialStore {
         } catch {
             if remember {
                 let signingHint = (error as NSError).code == Int(errSecMissingEntitlement)
-                    ? " Zum dauerhaften Merken muss der Mac-Build mit einem Apple-Development-Team signiert werden."
+                    ? String(localized: " Zum dauerhaften Merken muss der Mac-Build mit einem Apple-Development-Team signiert werden.")
                     : ""
-                return "Die SMB-Verbindung wurde hergestellt. Das Passwort konnte nicht im Schlüsselbund gespeichert werden und wird für diese Verbindung nur in der laufenden Sitzung verwendet." + signingHint
+                return String(localized: "Die SMB-Verbindung wurde hergestellt. Das Passwort konnte nicht im Schlüsselbund gespeichert werden und wird für diese Verbindung nur in der laufenden Sitzung verwendet.") + signingHint
             }
-            return "Die SMB-Verbindung wurde hergestellt. Der Schlüsselbund ist nicht zugänglich. Ein eventuell früher gespeichertes Passwort konnte deshalb nicht gelöscht werden. Das eingegebene Passwort wird nicht neu gespeichert."
+            return String(localized: "Die SMB-Verbindung wurde hergestellt. Der Schlüsselbund ist nicht zugänglich. Ein eventuell früher gespeichertes Passwort konnte deshalb nicht gelöscht werden. Das eingegebene Passwort wird nicht neu gespeichert.")
         }
     }
 
@@ -51,6 +51,6 @@ enum CredentialStore {
 
     private static func keychainError(_ status: OSStatus) -> NSError {
         NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: [NSLocalizedDescriptionKey:
-            "Das Passwort konnte nicht im Schlüsselbund gespeichert oder gelöscht werden (\(status))."])
+            String(localized: "Das Passwort konnte nicht im Schlüsselbund gespeichert oder gelöscht werden (\(String(status))).")])
     }
 }

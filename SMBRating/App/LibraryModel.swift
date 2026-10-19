@@ -44,7 +44,7 @@ final class LibraryModel: ObservableObject {
     var folders: [RemoteEntry] { entries.filter(\.isDirectory).sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending } }
     var photos: [RemoteEntry] { entries.filter { !$0.isDirectory && $0.isImage } }
     var canGoUp: Bool { path != rootPath }
-    var locationName: String { path == rootPath ? (isDemo ? "Demobibliothek" : settings.share) : (path as NSString).lastPathComponent }
+    var locationName: String { path == rootPath ? (isDemo ? String(localized: "Demobibliothek") : settings.share) : (path as NSString).lastPathComponent }
     var isBusy: Bool { isSaving || isDeleting || isMoving }
 
     func clearRatingOverride(for path: String) {
@@ -93,7 +93,7 @@ final class LibraryModel: ObservableObject {
         guard !isConnecting, !isBusy else { return }
         let password = storedPassword(for: profile.settings)
         guard let password = password ?? (profile.settings.username.isEmpty && !profile.rememberPassword ? "" : nil) else {
-            prepareConnection(profile, message: "Bitte das Passwort erneut eingeben. Danach wird der zuletzt geöffnete Ordner \(profile.lastPath) wiederhergestellt.")
+            prepareConnection(profile, message: String(localized: "Bitte das Passwort erneut eingeben. Danach wird der zuletzt geöffnete Ordner \(String(profile.lastPath)) wiederhergestellt."))
             return
         }
         if !(await connect(settings: profile.settings, password: password, remember: profile.rememberPassword, restoring: true)) {
@@ -121,7 +121,7 @@ final class LibraryModel: ObservableObject {
             catch {
                 guard previous != nil, start != "/", let code = (error as? POSIXError)?.code,
                       [.ENOENT, .ENOTDIR, .EACCES].contains(code) else { throw error }
-                folderNotice = "Der zuletzt geöffnete Ordner \(start) ist nicht mehr verfügbar. Stattdessen wurde die Freigabe geöffnet."
+                folderNotice = String(localized: "Der zuletzt geöffnete Ordner \(String(start)) ist nicht mehr verfügbar. Stattdessen wurde die Freigabe geöffnet.")
                 start = "/"
                 initial = try await client.list(start)
             }
@@ -317,13 +317,13 @@ struct FileDeletionRequest {
 
     var message: String {
         if isDemo {
-            return "„\(entry.name)“ aus der Demobibliothek entfernen? Beim erneuten Öffnen der Demo ist das Beispielbild wieder vorhanden."
+            return String(localized: "„\(String(entry.name))“ aus der Demobibliothek entfernen? Beim erneuten Öffnen der Demo ist das Beispielbild wieder vorhanden.")
         }
-        return "„\(entry.name)“ wird dauerhaft von \(location) gelöscht.\n\nPfad: \(entry.path)\n\nDies kann in der App nicht rückgängig gemacht werden."
+        return String(localized: "„\(String(entry.name))“ wird dauerhaft von \(String(location)) gelöscht.\n\nPfad: \(String(entry.path))\n\nDies kann in der App nicht rückgängig gemacht werden.")
     }
 }
 
 enum FileDeletionError: LocalizedError {
     case staleRequest
-    var errorDescription: String? { "Die Verbindung oder Dateiliste wurde geändert. Bitte die Datei neu auswählen und das Löschen erneut bestätigen." }
+    var errorDescription: String? { String(localized: "Die Verbindung oder Dateiliste wurde geändert. Bitte die Datei neu auswählen und das Löschen erneut bestätigen.") }
 }

@@ -31,29 +31,29 @@ struct FileMoveView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Datei") {
+                Section(String(localized: "Datei")) {
                     Label(request.entry.name, systemImage: "photo").font(.headline)
-                    Text("Quelle: \(request.sourceFolder)").font(.caption).foregroundStyle(.secondary)
+                    Text(String(localized: "Quelle: \(String(request.sourceFolder))")).font(.caption).foregroundStyle(.secondary)
                 }
-                Section("Zielordner") {
+                Section(String(localized: "Zielordner")) {
                     Label(destination, systemImage: "folder.fill").textSelection(.enabled)
                     if destination != "/" {
                         Button { openFolder("/") } label: {
-                            Label(library.isDemo ? "Demobibliothek" : library.settings.share, systemImage: "externaldrive")
+                            Label(library.isDemo ? String(localized: "Demobibliothek") : library.settings.share, systemImage: "externaldrive")
                         }
                         Button {
                             openFolder((destination as NSString).deletingLastPathComponent)
-                        } label: { Label("Übergeordneter Ordner", systemImage: "arrow.up") }
+                        } label: { Label(String(localized: "Übergeordneter Ordner"), systemImage: "arrow.up") }
                     }
                 }.disabled(isLoading || library.isBusy)
-                Section("Unterordner") {
+                Section(String(localized: "Unterordner")) {
                     if isLoading {
-                        ProgressView("Ordner werden geladen …")
+                        ProgressView(String(localized: "Ordner werden geladen …"))
                     } else if let loadError {
                         Text(loadError).foregroundStyle(.secondary)
-                        Button("Erneut laden") { retry += 1 }
+                        Button(String(localized: "Erneut laden")) { retry += 1 }
                     } else if folders.isEmpty {
-                        Text("Keine Unterordner").foregroundStyle(.secondary)
+                        Text(String(localized: "Keine Unterordner")).foregroundStyle(.secondary)
                     } else {
                         ForEach(folders) { folder in
                             Button { openFolder(folder.path) } label: {
@@ -67,25 +67,25 @@ struct FileMoveView: View {
                     }
                 }
                 if destination == request.sourceFolder {
-                    Text("Wähle einen anderen Ordner als Ziel.").font(.footnote).foregroundStyle(.secondary)
+                    Text(String(localized: "Wähle einen anderen Ordner als Ziel.")).font(.footnote).foregroundStyle(.secondary)
                 } else if !isLoading && loadError == nil && nameExists {
-                    Text("Hier gibt es bereits einen Eintrag mit diesem Namen. Wähle einen anderen Ordner.")
+                    Text(String(localized: "Hier gibt es bereits einen Eintrag mit diesem Namen. Wähle einen anderen Ordner."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Datei verschieben")
+            .navigationTitle(String(localized: "Datei verschieben"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }.disabled(isSubmitting)
+                    Button(String(localized: "Abbrechen")) { dismiss() }.disabled(isSubmitting)
                 }
             }
             .safeAreaInset(edge: .bottom) {
                 HStack {
-                    if isSubmitting { ProgressView("Datei wird verschoben …") }
+                    if isSubmitting { ProgressView(String(localized: "Datei wird verschoben …")) }
                     Spacer()
                     Button(action: move) {
-                        Label("Hierher verschieben", systemImage: "folder")
+                        Label(String(localized: "Hierher verschieben"), systemImage: "folder")
                     }
                         .buttonStyle(.borderedProminent)
                         .disabled(isLoading || isSubmitting || loadError != nil || library.isBusy
@@ -94,7 +94,7 @@ struct FileMoveView: View {
                 .padding(16).background(.bar)
             }
             .task(id: "\(destination)-\(retry)") { await loadFolders() }
-            .alert("Verschieben nicht bestätigt", isPresented: Binding(
+            .alert(String(localized: "Verschieben nicht bestätigt"), isPresented: Binding(
                 get: { moveError != nil }, set: { if !$0 { moveError = nil } })) {
                     Button("OK") { moveError = nil }
                 } message: { Text(moveError ?? "") }

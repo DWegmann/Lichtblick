@@ -127,8 +127,8 @@ enum ConnectionError: LocalizedError {
     case invalidAddress, notConnected
     var errorDescription: String? {
         switch self {
-        case .invalidAddress: return "Bitte einen Server wie nas.local oder smb://192.168.1.10 und einen separaten Freigabenamen eingeben."
-        case .notConnected: return "Bitte zuerst eine Verbindung herstellen."
+        case .invalidAddress: return String(localized: "Bitte einen Server wie nas.local oder smb://192.168.1.10 und einen separaten Freigabenamen eingeben.")
+        case .notConnected: return String(localized: "Bitte zuerst eine Verbindung herstellen.")
         }
     }
 }

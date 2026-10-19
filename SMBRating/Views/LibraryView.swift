@@ -130,10 +130,10 @@ struct LibraryView: View {
                 compactColumn = showSidebar ? .sidebar : .detail
             }
         } label: {
-            Label(sidebarIsVisible ? "Seitenleiste einklappen" : "Seitenleiste einblenden", systemImage: "sidebar.left")
+            Label(sidebarIsVisible ? String(localized: "Seitenleiste einklappen") : String(localized: "Seitenleiste einblenden"), systemImage: "sidebar.left")
         }
         .labelStyle(.iconOnly)
-        .help(sidebarIsVisible ? "Seitenleiste einklappen" : "Seitenleiste einblenden")
+        .help(sidebarIsVisible ? String(localized: "Seitenleiste einklappen") : String(localized: "Seitenleiste einblenden"))
     }
 
     var body: some View {
@@ -151,28 +151,28 @@ struct LibraryView: View {
                     }
                 }.padding(.top, 28)
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("BIBLIOTHEK").font(.caption2.bold()).tracking(2).foregroundStyle(Theme.muted)
-                    Label("Alle Bilder", systemImage: "square.grid.2x2.fill")
+                    Text(String(localized: "BIBLIOTHEK")).font(.caption2.bold()).tracking(2).foregroundStyle(Theme.muted)
+                    Label(String(localized: "Alle Bilder"), systemImage: "square.grid.2x2.fill")
                         .foregroundStyle(Theme.accent).frame(maxWidth: .infinity, alignment: .leading)
                         .padding(14).background(Theme.accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
                 }
                 if library.connected {
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("VERBINDUNG").font(.caption2.bold()).tracking(2).foregroundStyle(Theme.muted)
-                        Label(library.isDemo ? "Demo · lokal" : library.settings.server, systemImage: library.isDemo ? "sparkles" : "server.rack")
+                        Text(String(localized: "VERBINDUNG")).font(.caption2.bold()).tracking(2).foregroundStyle(Theme.muted)
+                        Label(library.isDemo ? String(localized: "Demo · lokal") : library.settings.server, systemImage: library.isDemo ? "sparkles" : "server.rack")
                             .font(.subheadline).lineLimit(2)
                         HStack(spacing: 6) {
                             Circle().fill(Theme.accent).frame(width: 6, height: 6)
-                            Text(library.isDemo ? "Zum Ausprobieren" : "Verbunden · \(library.settings.share)")
+                            Text(library.isDemo ? String(localized: "Zum Ausprobieren") : String(localized: "Verbunden · \(String(library.settings.share))"))
                                 .font(.caption).foregroundStyle(Theme.muted)
                         }
-                        Button("Verbindung trennen", role: .destructive) { Task { await library.disconnect() } }
+                        Button(String(localized: "Verbindung trennen"), role: .destructive) { Task { await library.disconnect() } }
                             .font(.caption)
                     }
                 }
                 if !library.savedConnections.isEmpty {
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("GESPEICHERTE VERBINDUNGEN").font(.caption2.bold()).tracking(1).foregroundStyle(Theme.muted)
+                        Text(String(localized: "GESPEICHERTE VERBINDUNGEN")).font(.caption2.bold()).tracking(1).foregroundStyle(Theme.muted)
                         ScrollView {
                             VStack(alignment: .leading, spacing: 16) {
                                 ForEach(library.savedConnections) { profile in
@@ -193,8 +193,8 @@ struct LibraryView: View {
                 }
                 Spacer()
                 VStack(alignment: .leading, spacing: 12) {
-                    Button { library.prepareConnection() } label: { Label("SMB verbinden", systemImage: "plus.circle") }
-                    Button { showInfo = true } label: { Label("Über Bewertungen", systemImage: "info.circle") }
+                    Button { library.prepareConnection() } label: { Label(String(localized: "SMB verbinden"), systemImage: "plus.circle") }
+                    Button { showInfo = true } label: { Label(String(localized: "Über Bewertungen"), systemImage: "info.circle") }
                         .foregroundStyle(Theme.muted)
                 }.font(.subheadline).padding(.bottom, 24)
             }
@@ -209,7 +209,7 @@ struct LibraryView: View {
                     else { welcome }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity).background(Theme.background)
-                .navigationTitle(library.connected ? library.locationName : "Dein nächster Lichtblick")
+                .navigationTitle(library.connected ? library.locationName : String(localized: "Dein nächster Lichtblick"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar(removing: .sidebarToggle)
                 .toolbar {
@@ -217,30 +217,30 @@ struct LibraryView: View {
                     if library.connected {
                         ToolbarItemGroup(placement: .topBarTrailing) {
                             Button { Task { await library.loadFolder(library.path, refreshPreviews: true) } } label: { Image(systemName: "arrow.clockwise") }
-                                .disabled(library.isLoading).accessibilityLabel("Ordner neu laden")
+                                .disabled(library.isLoading).accessibilityLabel(String(localized: "Ordner neu laden"))
                             ratingFilterMenu
                             Menu {
-                                Toggle("Unterordner einbeziehen", isOn: Binding(
+                                Toggle(String(localized: "Unterordner einbeziehen"), isOn: Binding(
                                     get: { library.includeSubfolders },
                                     set: { enabled in Task { await library.loadFolder(library.path, includingSubfolders: enabled) } }))
                                     .disabled(library.isLoading || library.isBusy || library.isConnecting)
                                 Divider()
-                                Picker("Sortierung", selection: $sortDescending) {
-                                    Text("Dateiname aufsteigend").tag(false)
-                                    Text("Dateiname absteigend").tag(true)
+                                Picker(String(localized: "Sortierung"), selection: $sortDescending) {
+                                    Text(String(localized: "Dateiname aufsteigend")).tag(false)
+                                    Text(String(localized: "Dateiname absteigend")).tag(true)
                                 }
                                 Divider()
-                                Picker("Vorschaubilder", selection: $showFullImage) {
-                                    Text("Ausschnitt anzeigen").tag(false)
-                                    Text("Ganzes Bild anzeigen").tag(true)
+                                Picker(String(localized: "Vorschaubilder"), selection: $showFullImage) {
+                                    Text(String(localized: "Ausschnitt anzeigen")).tag(false)
+                                    Text(String(localized: "Ganzes Bild anzeigen")).tag(true)
                                 }
                                 Divider()
-                                Picker("Vorschaugröße", selection: $tileSize) {
-                                    Text("Kleine Vorschaubilder").tag(150.0)
-                                    Text("Mittlere Vorschaubilder").tag(210.0)
-                                    Text("Große Vorschaubilder").tag(290.0)
+                                Picker(String(localized: "Vorschaugröße"), selection: $tileSize) {
+                                    Text(String(localized: "Kleine Vorschaubilder")).tag(150.0)
+                                    Text(String(localized: "Mittlere Vorschaubilder")).tag(210.0)
+                                    Text(String(localized: "Große Vorschaubilder")).tag(290.0)
                                 }
-                            } label: { Image(systemName: "slider.horizontal.3") }.accessibilityLabel("Ansicht anpassen")
+                            } label: { Image(systemName: "slider.horizontal.3") }.accessibilityLabel(String(localized: "Ansicht anpassen"))
                         }
                     }
                 }
@@ -248,7 +248,7 @@ struct LibraryView: View {
         }
         .sheet(isPresented: $library.showConnection) { ConnectionView().environmentObject(library) }
         .fullScreenCover(item: $selection) { PhotoViewer(entries: $0.entries, initialIndex: $0.index).environmentObject(library) }
-        .alert(library.error != nil ? "Hinweis" : "Verbindung hergestellt", isPresented: Binding(
+        .alert(library.error != nil ? String(localized: "Hinweis") : String(localized: "Verbindung hergestellt"), isPresented: Binding(
             get: { !library.showConnection && (library.error != nil || library.credentialWarning != nil) },
             set: { if !$0 { library.error = nil; library.credentialWarning = nil } })) {
             Button("OK") { library.error = nil; library.credentialWarning = nil }
@@ -258,7 +258,7 @@ struct LibraryView: View {
         .fileDeletionConfirmation($deletionRequest) { request in
             Task {
                 do { try await library.deleteFile(request) }
-                catch { library.error = "Das Löschen konnte nicht bestätigt werden: \(error.localizedDescription)\nBitte den Ordner neu laden, um den aktuellen Stand zu prüfen." }
+                catch { library.error = String(localized: "Das Löschen konnte nicht bestätigt werden: \(String(error.localizedDescription))\nBitte den Ordner neu laden, um den aktuellen Stand zu prüfen.") }
             }
         }
         .onChange(of: library.connected, initial: true) { _, connected in
@@ -295,19 +295,19 @@ struct LibraryView: View {
 
     private var ratingFilterMenu: some View {
         Menu {
-            Picker("Bewertung", selection: $ratingFilter) {
+            Picker(String(localized: "Bewertung"), selection: $ratingFilter) {
                 ForEach(RatingFilter.allCases) { filter in Text(filter.title).tag(filter) }
             }
             if ratingFilter != .all {
                 Divider()
-                Button("Bewertungen erneut lesen") { ratingRefreshID = UUID() }
+                Button(String(localized: "Bewertungen erneut lesen")) { ratingRefreshID = UUID() }
                     .disabled(isReadingRatings)
             }
         } label: {
-            Label("Bewertung filtern", systemImage: ratingFilter == .all
+            Label(String(localized: "Bewertung filtern"), systemImage: ratingFilter == .all
                 ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
         }
-        .accessibilityLabel("Bewertung filtern: \(ratingFilter.title)")
+        .accessibilityLabel(String(localized: "Bewertung filtern: \(String(ratingFilter.title))"))
         .disabled(library.isLoading || library.isConnecting || library.isBusy)
     }
 
@@ -316,16 +316,16 @@ struct LibraryView: View {
             HStack {
                 Label(ratingFilter.title, systemImage: "star.fill").foregroundStyle(Theme.accent)
                 Spacer()
-                Button(isReadingRatings ? "Abbrechen" : "Filter entfernen") { ratingFilter = .all }
+                Button(isReadingRatings ? String(localized: "Abbrechen") : String(localized: "Filter entfernen")) { ratingFilter = .all }
             }
             if isReadingRatings { ratingReadProgress }
             if ratingReadFailures > 0 {
                 HStack {
-                    Text(ratingReadFailures == 1 ? "Eine Bewertung konnte nicht gelesen werden."
-                         : "\(ratingReadFailures) Bewertungen konnten nicht gelesen werden.")
+                    Text(ratingReadFailures == 1 ? String(localized: "Eine Bewertung konnte nicht gelesen werden.")
+                         : String(localized: "\(String(ratingReadFailures)) Bewertungen konnten nicht gelesen werden."))
                         .foregroundStyle(Theme.muted)
                     Spacer()
-                    Button("Erneut prüfen") { ratingRefreshID = UUID() }
+                    Button(String(localized: "Erneut prüfen")) { ratingRefreshID = UUID() }
                         .disabled(isReadingRatings)
                 }
             }
@@ -335,7 +335,7 @@ struct LibraryView: View {
     private var ratingReadProgress: some View {
         HStack(spacing: 8) {
             ProgressView().controlSize(.mini)
-            Text("\(ratingReadCount) / \(ratingReadTotal) Bewertungen geprüft · weitere Treffer erscheinen automatisch")
+            Text(String(localized: "\(String(ratingReadCount)) / \(String(ratingReadTotal)) Bewertungen geprüft · weitere Treffer erscheinen automatisch"))
                 .foregroundStyle(Theme.muted)
         }.font(.caption)
     }
@@ -349,19 +349,19 @@ struct LibraryView: View {
                 Image(systemName: "photo.on.rectangle.angled").font(.system(size: 62, weight: .ultraLight)).foregroundStyle(Theme.accent)
             }
             VStack(spacing: 12) {
-                Text("Deine Bilder. Dein Blick.").font(.system(size: 34, weight: .semibold, design: .serif))
-                Text("Fotos auf deinem Server entdecken,\nin Ruhe durchsehen und mit Sternen bewerten.")
+                Text(String(localized: "Deine Bilder. Dein Blick.")).font(.system(size: 34, weight: .semibold, design: .serif))
+                Text(String(localized: "Fotos auf deinem Server entdecken,\nin Ruhe durchsehen und mit Sternen bewerten."))
                     .multilineTextAlignment(.center).foregroundStyle(Theme.muted).lineSpacing(5)
             }
             if library.isRestoring {
-                ProgressView("Letzte Verbindung wird wiederhergestellt …").padding(.vertical, 10)
+                ProgressView(String(localized: "Letzte Verbindung wird wiederhergestellt …")).padding(.vertical, 10)
             }
             Button { library.prepareConnection() } label: {
-                Label("Mit SMB-Server verbinden", systemImage: "externaldrive.connected.to.line.below")
+                Label(String(localized: "Mit SMB-Server verbinden"), systemImage: "externaldrive.connected.to.line.below")
                     .font(.headline).padding(.horizontal, 18).padding(.vertical, 10)
             }.buttonStyle(.borderedProminent).foregroundStyle(Theme.background).padding(.top, 8)
-            Button("Demobibliothek öffnen") { Task { await library.openDemo() } }.font(.subheadline)
-            Text("Direkte Verbindung · Eingebettete XMP-Sterne · Kein Cloud-Konto")
+            Button(String(localized: "Demobibliothek öffnen")) { Task { await library.openDemo() } }.font(.subheadline)
+            Text(String(localized: "Direkte Verbindung · Eingebettete XMP-Sterne · Kein Cloud-Konto"))
                 .font(.caption).foregroundStyle(Theme.muted).padding(.top, 16)
         }.padding(30)
     }
@@ -371,12 +371,12 @@ struct LibraryView: View {
             HStack {
                 if library.canGoUp {
                     Button { Task { await library.goUp() } } label: { Image(systemName: "arrow.up") }
-                        .accessibilityLabel("Übergeordneter Ordner")
+                        .accessibilityLabel(String(localized: "Übergeordneter Ordner"))
                 }
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
                         Button { Task { await library.loadFolder("/") } } label: {
-                            Label(library.isDemo ? "Demobibliothek" : library.settings.share, systemImage: "externaldrive")
+                            Label(library.isDemo ? String(localized: "Demobibliothek") : library.settings.share, systemImage: "externaldrive")
                         }.disabled(library.isLoading || library.path == "/")
                         ForEach(Array(library.path.split(separator: "/").enumerated()), id: \.offset) { offset, component in
                             Image(systemName: "chevron.right").foregroundStyle(Theme.muted)
@@ -388,20 +388,20 @@ struct LibraryView: View {
                     }.font(.system(size: 12, weight: .medium)).lineLimit(1)
                 }
                 Spacer()
-                if library.isDeleting { ProgressView("Datei wird gelöscht …").font(.caption) }
-                else if library.isMoving { ProgressView("Datei wird verschoben …").font(.caption) }
-                else { Text(photos.count == 1 ? "1 Bild" : "\(photos.count) Bilder").font(.caption).foregroundStyle(Theme.muted) }
+                if library.isDeleting { ProgressView(String(localized: "Datei wird gelöscht …")).font(.caption) }
+                else if library.isMoving { ProgressView(String(localized: "Datei wird verschoben …")).font(.caption) }
+                else { Text(photos.count == 1 ? String(localized: "1 Bild") : String(localized: "\(String(photos.count)) Bilder")).font(.caption).foregroundStyle(Theme.muted) }
             }.padding(.horizontal, 28).padding(.vertical, 18)
             if ratingFilter != .all { ratingFilterStatus }
             if library.isDemo {
                 HStack {
                     Image(systemName: "sparkles")
-                    Text("Demo mit illustrativen Beispielbildern. Bewertungen gelten nur bis zum Schließen der Demo.")
+                    Text(String(localized: "Demo mit illustrativen Beispielbildern. Bewertungen gelten nur bis zum Schließen der Demo."))
                 }.font(.caption).foregroundStyle(Theme.accent).frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 28).padding(.bottom, 16)
             }
             if library.includeSubfolders && !library.isLoading {
-                Label("Bilder aus diesem Ordner und allen Unterordnern", systemImage: "folder.badge.plus")
+                Label(String(localized: "Bilder aus diesem Ordner und allen Unterordnern"), systemImage: "folder.badge.plus")
                     .font(.caption).foregroundStyle(Theme.muted)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 28).padding(.bottom, 12)
@@ -409,8 +409,8 @@ struct LibraryView: View {
             if library.isLoading {
                 Spacer()
                 VStack(spacing: 18) {
-                    ProgressView("Bilder werden gesucht …")
-                    Button("Abbrechen") { library.cancelLoading() }
+                    ProgressView(String(localized: "Bilder werden gesucht …"))
+                    Button(String(localized: "Abbrechen")) { library.cancelLoading() }
                 }
                 Spacer()
             } else {
@@ -420,29 +420,29 @@ struct LibraryView: View {
                             DisclosureGroup(isExpanded: $library.foldersExpanded) {
                                 folderGrid.padding(.top, 12)
                             } label: {
-                                browserSectionLabel("Ordner", systemImage: "folder", count: folders.count)
+                                browserSectionLabel(String(localized: "Ordner"), systemImage: "folder", count: folders.count)
                             }
                         }
                         if !photos.isEmpty {
                             DisclosureGroup(isExpanded: $photosExpanded) {
                                 photoGrid.padding(.top, 12)
                             } label: {
-                                browserSectionLabel("Bilder", systemImage: "photo.on.rectangle", count: photos.count)
+                                browserSectionLabel(String(localized: "Bilder"), systemImage: "photo.on.rectangle", count: photos.count)
                             }
                         }
                     }.tint(Theme.accent).padding(28)
                     if !isReadingRatings && photos.isEmpty && (folders.isEmpty || ratingFilter != .all) {
-                        ContentUnavailableView(ratingFilter != .all ? "Keine Bilder mit dieser Bewertung"
-                            : (query.isEmpty ? "Keine Bilder in diesem Ordner" : "Keine Treffer"),
+                        ContentUnavailableView(ratingFilter != .all ? String(localized: "Keine Bilder mit dieser Bewertung")
+                            : (query.isEmpty ? String(localized: "Keine Bilder in diesem Ordner") : String(localized: "Keine Treffer")),
                             systemImage: ratingFilter != .all ? "star.slash" : (query.isEmpty ? "photo.on.rectangle" : "magnifyingglass"),
-                            description: Text(ratingFilter != .all ? "Wähle eine andere Bewertung oder entferne den Filter."
-                                : (query.isEmpty ? "Öffne einen anderen Ordner oder lade die Ansicht neu." : "Versuche einen anderen Dateinamen.")))
+                            description: Text(ratingFilter != .all ? String(localized: "Wähle eine andere Bewertung oder entferne den Filter.")
+                                : (query.isEmpty ? String(localized: "Öffne einen anderen Ordner oder lade die Ansicht neu.") : String(localized: "Versuche einen anderen Dateinamen."))))
                             .padding(.top, 70)
                     }
                 }.id("\(library.revision)-\(query)-\(sortDescending)-\(ratingFilter.rawValue)")
             }
         }
-        .searchable(text: $query, prompt: "Dateinamen suchen")
+        .searchable(text: $query, prompt: String(localized: "Dateinamen suchen"))
     }
 
     private func browserSectionLabel(_ title: String, systemImage: String, count: Int) -> some View {
@@ -466,7 +466,7 @@ struct LibraryView: View {
                         Spacer(); Image(systemName: "chevron.right").font(.caption).foregroundStyle(Theme.muted)
                     }.padding(20).frame(maxWidth: .infinity, minHeight: 82).background(Theme.surface, in: RoundedRectangle(cornerRadius: 12))
                 }.buttonStyle(.plain)
-                    .accessibilityLabel("Ordner \(folder.name) öffnen")
+                    .accessibilityLabel(String(localized: "Ordner \(String(folder.name)) öffnen"))
             }
         }
     }
@@ -492,32 +492,32 @@ struct LibraryView: View {
     private var metadataInfo: some View {
         NavigationStack {
             List {
-                Section("Sterne direkt im Bild") {
-                    Text("Lichtblick liest und schreibt xmp:Rating (0–5) im eingebetteten XMP-Paket. Vorhandene IPTC-StarRating-Werte werden als Fallback gelesen. XMP hat Vorrang. Eine vorhandene Ablehnungsmarkierung (−1) wird angezeigt und bleibt bis zur nächsten Bewertung erhalten.")
-                    Text("JPEG, HEIC, PNG und einseitige TIFFs werden nur geändert, wenn Image I/O verlustfreies Kopieren mit Metadaten unterstützt. Andere Formate bleiben zum Ansehen verfügbar, soweit iPadOS sie decodieren kann. Es werden keine XMP-Sidecars angelegt.")
+                Section(String(localized: "Sterne direkt im Bild")) {
+                    Text(String(localized: "Lichtblick liest und schreibt xmp:Rating (0–5) im eingebetteten XMP-Paket. Vorhandene IPTC-StarRating-Werte werden als Fallback gelesen. XMP hat Vorrang. Eine vorhandene Ablehnungsmarkierung (−1) wird angezeigt und bleibt bis zur nächsten Bewertung erhalten."))
+                    Text(String(localized: "JPEG, HEIC, PNG und einseitige TIFFs werden nur geändert, wenn Image I/O verlustfreies Kopieren mit Metadaten unterstützt. Andere Formate bleiben zum Ansehen verfügbar, soweit iPadOS sie decodieren kann. Es werden keine XMP-Sidecars angelegt."))
                 }
-                Section("Speichern auf SMB") {
-                    Text("Die gesamte Datei wird geladen. Beim Speichern wird eine temporäre Datei hochgeladen und zurückgelesen. Erst nach erfolgreicher Prüfung wird das Original über eine Sicherungsdatei ersetzt. Bitte nicht gleichzeitig in anderen Programmen bearbeiten: SMB bietet hier keinen atomaren Vergleich mit anschließendem Ersetzen.")
-                    Text("Dateien über 128 MB werden nicht geladen. Vorschaubilder entstehen lokal; das erste Öffnen großer Ordner kann deshalb dauern. Bei einem Verbindungsabbruch während des Ersetzens kann eine .smbrating-…backup-Datei eine manuelle Wiederherstellung erfordern.")
+                Section(String(localized: "Speichern auf SMB")) {
+                    Text(String(localized: "Die gesamte Datei wird geladen. Beim Speichern wird eine temporäre Datei hochgeladen und zurückgelesen. Erst nach erfolgreicher Prüfung wird das Original über eine Sicherungsdatei ersetzt. Bitte nicht gleichzeitig in anderen Programmen bearbeiten: SMB bietet hier keinen atomaren Vergleich mit anschließendem Ersetzen."))
+                    Text(String(localized: "Dateien über 128 MB werden nicht geladen. Vorschaubilder entstehen lokal; das erste Öffnen großer Ordner kann deshalb dauern. Bei einem Verbindungsabbruch während des Ersetzens kann eine .smbrating-…backup-Datei eine manuelle Wiederherstellung erfordern."))
                 }
                 Section("Open Source") {
                     Link("AMSMB2 · LGPL 2.1", destination: URL(string: "https://github.com/amosavian/AMSMB2")!)
                     Link("libsmb2 · LGPL 2.1", destination: URL(string: "https://github.com/sahlberg/libsmb2")!)
-                    NavigationLink("Lizenztexte anzeigen") {
+                    NavigationLink(String(localized: "Lizenztexte anzeigen")) {
                         ScrollView {
                             Text(licenseText).font(.system(.caption, design: .monospaced)).textSelection(.enabled).padding(24)
-                        }.navigationTitle("Open-Source-Lizenzen")
+                        }.navigationTitle(String(localized: "Open-Source-Lizenzen"))
                     }
                 }
-            }.navigationTitle("Über Bewertungen").toolbar {
-                ToolbarItem(placement: .confirmationAction) { Button("Fertig") { showInfo = false } }
+            }.navigationTitle(String(localized: "Über Bewertungen")).toolbar {
+                ToolbarItem(placement: .confirmationAction) { Button(String(localized: "Fertig")) { showInfo = false } }
             }
         }
     }
 
     private var licenseText: String {
         guard let url = Bundle.main.url(forResource: "OpenSourceLicenses", withExtension: "txt"),
-              let text = try? String(contentsOf: url, encoding: .utf8) else { return "Die Lizenztexte sind im Quellprojekt unter Resources verfügbar." }
+              let text = try? String(contentsOf: url, encoding: .utf8) else { return String(localized: "Die Lizenztexte sind im Quellprojekt unter Resources verfügbar.") }
         return text
     }
 }
@@ -554,7 +554,7 @@ struct PhotoTile: View {
                 } else if failure != nil {
                     VStack(spacing: 8) {
                         Image(systemName: "exclamationmark.triangle").font(.title2)
-                        Text("Vorschau nicht verfügbar").font(.caption)
+                        Text(String(localized: "Vorschau nicht verfügbar")).font(.caption)
                     }.foregroundStyle(Theme.muted)
                 } else { ProgressView() }
                 if let photo, !photo.metadata.canWrite {
@@ -574,29 +574,29 @@ struct PhotoTile: View {
                             .foregroundStyle(value <= rating ? Theme.accent : Theme.muted.opacity(0.4))
                     }
                 } else {
-                    Text(failure == nil ? "Bewertung wird geladen …" : "Bewertung nicht verfügbar")
+                    Text(failure == nil ? String(localized: "Bewertung wird geladen …") : String(localized: "Bewertung nicht verfügbar"))
                         .font(.caption2).foregroundStyle(Theme.muted).lineLimit(1)
                 }
                 Spacer()
-                Text(rating == -1 ? "Abgelehnt" : (entry.name as NSString).pathExtension.uppercased())
+                Text(rating == -1 ? String(localized: "Abgelehnt") : (entry.name as NSString).pathExtension.uppercased())
                     .font(.system(size: 9, weight: .semibold, design: .monospaced)).foregroundStyle(Theme.muted)
             }.font(.system(size: 10)).frame(height: 18)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(entry.name), \(library.includeSubfolders ? entry.relativeFolder(to: library.path) + ", " : "")\((library.ratings[entry.path] ?? photo?.metadata.rating).map { "\($0) Sterne" } ?? (failure == nil ? "Bewertung wird geladen" : "Bewertung nicht verfügbar"))")
+        .accessibilityLabel("\(entry.name), \(library.includeSubfolders ? entry.relativeFolder(to: library.path) + ", " : "")\((library.ratings[entry.path] ?? photo?.metadata.rating).flatMap { RatingFilter(rawValue: $0)?.title } ?? (failure == nil ? String(localized: "Bewertung wird geladen") : String(localized: "Bewertung nicht verfügbar")))")
         .contextMenu {
             if let failure {
                 Text(failure)
-                Button("Vorschau erneut laden") { attempt += 1 }
+                Button(String(localized: "Vorschau erneut laden")) { attempt += 1 }
                 Divider()
             }
-            Button(action: onMove) { Label("Datei verschieben", systemImage: "folder") }
+            Button(action: onMove) { Label(String(localized: "Datei verschieben"), systemImage: "folder") }
                 .disabled(library.isBusy || library.isLoading || library.isConnecting || entry.isSymbolicLink)
-            Button(role: .destructive, action: onDelete) { Label("Datei löschen", systemImage: "trash") }
+            Button(role: .destructive, action: onDelete) { Label(String(localized: "Datei löschen"), systemImage: "trash") }
                 .disabled(library.isBusy || library.isLoading || library.isConnecting)
         }
-        .accessibilityAction(named: "Datei löschen", onDelete)
-        .accessibilityAction(named: "Datei verschieben", onMove)
+        .accessibilityAction(named: String(localized: "Datei löschen"), onDelete)
+        .accessibilityAction(named: String(localized: "Datei verschieben"), onMove)
         .task(id: "\(library.revision)-\(attempt)") {
             guard let pipeline = library.pipeline else { return }
             photo = nil; failure = nil

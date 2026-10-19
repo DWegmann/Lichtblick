@@ -22,7 +22,7 @@ public struct PhotoMetadata: Sendable, Equatable {
         let rating = [xmp, legacy].compactMap { $0 }.first(where: { (-1...5).contains($0) })
         return PhotoMetadata(
             rating: rating ?? 0,
-            origin: xmp != nil ? "XMP" : (legacy != nil ? "IPTC" : "Ohne Bewertung"),
+            origin: xmp != nil ? "XMP" : (legacy != nil ? "IPTC" : String(localized: "Ohne Bewertung")),
             width: properties[kCGImagePropertyPixelWidth as String] as? Int ?? 0,
             height: properties[kCGImagePropertyPixelHeight as String] as? Int ?? 0,
             canWrite: writableTypes.contains(type as String) && CGImageSourceGetCount(source) == 1
@@ -69,15 +69,15 @@ public enum RatingError: LocalizedError {
 
     public var errorDescription: String? {
         switch self {
-        case .invalidImage: return "Die Bilddatei kann nicht gelesen werden."
-        case .invalidRating: return "Eine Bewertung muss zwischen 0 und 5 Sternen liegen."
-        case .unsupportedWrite: return "Dieses Format unterstützt hier keine verlustfreie Metadatenänderung. Es kann nur angesehen werden."
-        case .metadataWrite: return "Die XMP-Bewertung konnte nicht erstellt werden."
-        case .verification: return "Die gespeicherten Daten haben die Prüfung nicht bestanden."
-        case .conflict: return "Die Datei wurde auf dem Server geändert. Bitte das Bild neu laden und erneut bewerten."
-        case .busy: return "Ein Speichervorgang läuft bereits."
-        case .tooLarge: return "Dieses Bild ist größer als 128 MB und kann auf dem iPad nicht geladen werden."
-        case .recovery(let path): return "Der Speichervorgang wurde unterbrochen. Bitte die Originaldatei und die mögliche Sicherungsdatei \(path) auf dem Server prüfen, bevor du erneut speicherst."
+        case .invalidImage: return String(localized: "Die Bilddatei kann nicht gelesen werden.")
+        case .invalidRating: return String(localized: "Eine Bewertung muss zwischen 0 und 5 Sternen liegen.")
+        case .unsupportedWrite: return String(localized: "Dieses Format unterstützt hier keine verlustfreie Metadatenänderung. Es kann nur angesehen werden.")
+        case .metadataWrite: return String(localized: "Die XMP-Bewertung konnte nicht erstellt werden.")
+        case .verification: return String(localized: "Die gespeicherten Daten haben die Prüfung nicht bestanden.")
+        case .conflict: return String(localized: "Die Datei wurde auf dem Server geändert. Bitte das Bild neu laden und erneut bewerten.")
+        case .busy: return String(localized: "Ein Speichervorgang läuft bereits.")
+        case .tooLarge: return String(localized: "Dieses Bild ist größer als 128 MB und kann auf dem iPad nicht geladen werden.")
+        case .recovery(let path): return String(localized: "Der Speichervorgang wurde unterbrochen. Bitte die Originaldatei und die mögliche Sicherungsdatei \(String(path)) auf dem Server prüfen, bevor du erneut speicherst.")
         }
     }
 }

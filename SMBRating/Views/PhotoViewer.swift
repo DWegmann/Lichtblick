@@ -20,7 +20,7 @@ struct PhotoViewer: View {
     @State private var deletionRequest: FileDeletionRequest?
     @State private var moveRequest: FileMoveRequest?
     @State private var movedPath: String?
-    @State private var errorTitle = "Bewertung nicht gespeichert"
+    @State private var errorTitle = String(localized: "Bewertung nicht gespeichert")
 
     init(entries: [RemoteEntry], initialIndex: Int) {
         _entries = State(initialValue: entries)
@@ -31,23 +31,23 @@ struct PhotoViewer: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 18) {
-                Button(action: returnToOverview) { Label("Übersicht", systemImage: "square.grid.2x2") }
+                Button(action: returnToOverview) { Label(String(localized: "Übersicht"), systemImage: "square.grid.2x2") }
                     .keyboardShortcut(.escape, modifiers: [])
                 Spacer()
                 VStack(spacing: 4) {
                     Text(entry.name).font(.subheadline.weight(.medium)).lineLimit(1)
-                    Text("\(index + 1) von \(entries.count)").font(.caption).foregroundStyle(Theme.muted)
+                    Text(String(localized: "\(String(index + 1)) von \(String(entries.count))")).font(.caption).foregroundStyle(Theme.muted)
                 }
                 Spacer()
                 Button { showInfo.toggle() } label: { Image(systemName: "info.circle") }
-                    .accessibilityLabel("Bildinformationen")
+                    .accessibilityLabel(String(localized: "Bildinformationen"))
                 Button { moveRequest = library.moveRequest(for: entry) } label: {
                     Image(systemName: "folder").frame(width: 44, height: 44)
-                }.accessibilityLabel("Datei verschieben")
+                }.accessibilityLabel(String(localized: "Datei verschieben"))
                     .disabled(entry.isSymbolicLink)
                 Button(role: .destructive) { deletionRequest = library.deletionRequest(for: entry) } label: {
                     Image(systemName: "trash").frame(width: 44, height: 44)
-                }.accessibilityLabel("Datei löschen")
+                }.accessibilityLabel(String(localized: "Datei löschen"))
             }.padding(.horizontal, 24).padding(.vertical, 18).disabled(library.isBusy)
             ZStack {
                 Color.black
@@ -61,10 +61,10 @@ struct PhotoViewer: View {
                             Spacer()
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(entry.name).font(.headline)
-                                Text("\(photo.metadata.width) × \(photo.metadata.height) Pixel")
+                                Text(String(localized: "\(String(photo.metadata.width)) × \(String(photo.metadata.height)) Pixel"))
                                 Text(ByteCountFormatter.string(fromByteCount: entry.size, countStyle: .file))
-                                Text("Bewertung: \(photo.metadata.origin)")
-                                Text(photo.metadata.canWrite ? "Speichern: eingebettetes XMP" : "Nur ansehen")
+                                Text(String(localized: "Bewertung: \(String(photo.metadata.origin))"))
+                                Text(photo.metadata.canWrite ? String(localized: "Speichern: eingebettetes XMP") : String(localized: "Nur ansehen"))
                             }.font(.caption).padding(20).background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
                         }
                         Spacer()
@@ -74,7 +74,7 @@ struct PhotoViewer: View {
             HStack(spacing: 20) {
                 Button { navigate(-1) } label: { Image(systemName: "chevron.left").font(.title3).frame(width: 44, height: 44) }
                     .disabled(index == 0 || library.isBusy).keyboardShortcut(.leftArrow, modifiers: [])
-                    .accessibilityLabel("Vorheriges Bild")
+                    .accessibilityLabel(String(localized: "Vorheriges Bild"))
                 Spacer(minLength: 0)
                 VStack(spacing: 12) {
                     HStack(spacing: 8) {
@@ -85,12 +85,13 @@ struct PhotoViewer: View {
                                     .frame(width: 44, height: 44)
                             }
                             .keyboardShortcut(KeyEquivalent(Character(String(value))), modifiers: [])
-                            .accessibilityLabel("\(value) Sterne vergeben")
+                            .accessibilityLabel(value == 1 ? String(localized: "1 Stern vergeben")
+                                : String(localized: "\(String(value)) Sterne vergeben"))
                             .disabled(original == nil || library.isBusy || photo?.metadata.canWrite != true)
                         }
                         Button { save(0) } label: { Image(systemName: "xmark.circle").frame(width: 44, height: 44) }
                             .foregroundStyle(Theme.muted).keyboardShortcut("0", modifiers: [])
-                            .accessibilityLabel("Bewertung entfernen")
+                            .accessibilityLabel(String(localized: "Bewertung entfernen"))
                             .disabled(original == nil || library.isBusy || photo?.metadata.canWrite != true)
                     }
                     HStack(spacing: 8) {
@@ -101,7 +102,7 @@ struct PhotoViewer: View {
                 Spacer(minLength: 0)
                 Button { navigate(1) } label: { Image(systemName: "chevron.right").font(.title3).frame(width: 44, height: 44) }
                     .disabled(index == entries.count - 1 || library.isBusy).keyboardShortcut(.rightArrow, modifiers: [])
-                    .accessibilityLabel("Nächstes Bild")
+                    .accessibilityLabel(String(localized: "Nächstes Bild"))
             }.padding(.horizontal, 20).padding(.vertical, 18)
         }
         .background(Theme.background).foregroundStyle(.white)
@@ -110,7 +111,7 @@ struct PhotoViewer: View {
         .task(id: entry.path) { await prepareAdjacentPreviews() }
         .alert(errorTitle, isPresented: Binding(get: { saveError != nil }, set: { if !$0 { saveError = nil } })) {
             Button("OK") { saveError = nil }
-            Button("Bild neu laden") { retry += 1 }
+            Button(String(localized: "Bild neu laden")) { retry += 1 }
         } message: { Text(saveError ?? "") }
         .fileDeletionConfirmation($deletionRequest, onConfirm: delete)
         .sheet(item: $moveRequest, onDismiss: {
@@ -124,16 +125,18 @@ struct PhotoViewer: View {
     }
 
     private var footer: String {
-        if library.isDeleting { return "Datei wird gelöscht …" }
-        if library.isMoving { return "Datei wird verschoben …" }
-        if library.isSaving { return "Bewertung wird gespeichert und geprüft …" }
+        if library.isDeleting { return String(localized: "Datei wird gelöscht …") }
+        if library.isMoving { return String(localized: "Datei wird verschoben …") }
+        if library.isSaving { return String(localized: "Bewertung wird gespeichert und geprüft …") }
         if let status { return status }
         if original == nil {
-            return loadError == nil ? "Bild und Bewertung werden geladen …" : "Bild konnte nicht geladen werden."
+            return loadError == nil ? String(localized: "Bild und Bewertung werden geladen …") : String(localized: "Bild konnte nicht geladen werden.")
         }
-        if photo?.metadata.canWrite == false { return "Dieses Bild kann nur angesehen werden." }
-        if rating == -1 { return "Als abgelehnt markiert · Mit Sternen neu bewerten" }
-        return "\(rating == 0 ? "Ohne Bewertung" : "\(rating) Sterne") · \(library.isDemo ? "Demo" : "Eingebettetes XMP") · Doppeltippen zum Zoomen"
+        if photo?.metadata.canWrite == false { return String(localized: "Dieses Bild kann nur angesehen werden.") }
+        if rating == -1 { return String(localized: "Als abgelehnt markiert · Mit Sternen neu bewerten") }
+        let ratingTitle = RatingFilter(rawValue: rating)?.title ?? String(localized: "Ohne Bewertung")
+        let storage = library.isDemo ? String(localized: "Demo") : String(localized: "Eingebettetes XMP")
+        return String(localized: "\(ratingTitle) · \(storage) · Doppeltippen zum Zoomen")
     }
 
     private func returnToOverview() {
@@ -184,7 +187,7 @@ struct PhotoViewer: View {
 
     private func save(_ value: Int) {
         guard let original, !library.isBusy, deletionRequest == nil, moveRequest == nil else { return }
-        errorTitle = "Bewertung nicht gespeichert"
+        errorTitle = String(localized: "Bewertung nicht gespeichert")
         let currentEntry = entry
         Task {
             do {
@@ -194,8 +197,8 @@ struct PhotoViewer: View {
                 if let photo {
                     self.photo = LoadedPhoto(image: photo.image, metadata: try PhotoMetadata.read(result.data))
                 }
-                status = result.retainedBackup.map { "Gespeichert. Sicherung nicht gelöscht: \($0)" }
-                    ?? (library.isDemo ? "In der Demobibliothek gespeichert" : "Auf dem SMB-Server gespeichert und geprüft")
+                status = result.retainedBackup.map { String(localized: "Gespeichert. Sicherung nicht gelöscht: \(String($0))") }
+                    ?? (library.isDemo ? String(localized: "In der Demobibliothek gespeichert") : String(localized: "Auf dem SMB-Server gespeichert und geprüft"))
             } catch { saveError = error.localizedDescription }
         }
     }
@@ -206,8 +209,8 @@ struct PhotoViewer: View {
                 try await library.deleteFile(request)
                 removeFromViewer(request.entry.path)
             } catch {
-                errorTitle = "Löschen nicht bestätigt"
-                saveError = "\(error.localizedDescription)\nBitte die Übersicht neu laden, um den aktuellen Stand zu prüfen."
+                errorTitle = String(localized: "Löschen nicht bestätigt")
+                saveError = String(localized: "\(String(error.localizedDescription))\nBitte die Übersicht neu laden, um den aktuellen Stand zu prüfen.")
             }
         }
     }
@@ -246,10 +249,10 @@ private struct ViewerImagePage: View {
                 VStack(spacing: 18) {
                     Image(systemName: "photo.badge.exclamationmark").font(.largeTitle)
                     Text(error).multilineTextAlignment(.center).foregroundStyle(.secondary)
-                    Button("Erneut laden", action: onRetry)
+                    Button(String(localized: "Erneut laden"), action: onRetry)
                 }.padding(40).background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
             } else if image == nil {
-                ProgressView("Bild wird geladen …")
+                ProgressView(String(localized: "Bild wird geladen …"))
             }
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }

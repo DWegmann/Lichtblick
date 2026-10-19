@@ -5,14 +5,14 @@ private struct FileDeletionConfirmation: ViewModifier {
     let onConfirm: (FileDeletionRequest) -> Void
 
     func body(content: Content) -> some View {
-        content.confirmationDialog("Datei löschen?", isPresented: Binding(
+        content.confirmationDialog(String(localized: "Datei löschen?"), isPresented: Binding(
             get: { request != nil }, set: { if !$0 { request = nil } }),
             titleVisibility: .visible, presenting: request) { confirmed in
-                Button("Endgültig löschen", role: .destructive) {
+                Button(String(localized: "Endgültig löschen"), role: .destructive) {
                     request = nil
                     onConfirm(confirmed)
                 }
-                Button("Abbrechen", role: .cancel) { request = nil }
+                Button(String(localized: "Abbrechen"), role: .cancel) { request = nil }
             } message: { confirmed in
                 Text(confirmed.message)
             }
