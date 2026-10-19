@@ -1,10 +1,34 @@
 # Lichtblick · SMB Photo Rating
 
+Ich habe Lichtblick für meinen eigenen Gebrauch entwickelt. Wenn du die App ebenfalls nutzen möchtest, aber keine Möglichkeit hast, sie selbst zu bauen, melde dich gerne über ein [GitHub-Issue](https://github.com/DWegmann/Lichtblick/issues). Bei entsprechendem Interesse könnte ich die App auch zur Veröffentlichung im App Store einreichen.
+
 > **100 % vibe coded:** Der eigene App-Code wurde vollständig mit KI generiert. Die Ideen, Anforderungen und die Steuerung der Entwicklung stammen von Dominic Wegmann. Verwendete Bibliotheken sind eigenständige Projekte ihrer jeweiligen Urheber.
 >
 > **Nur nichtkommerzielle Weiterverwendung:** Der eigene Projektcode darf unter der [PolyForm Noncommercial License 1.0.0](LICENSE.md) verwendet, verändert und weitergegeben werden. Eine kommerzielle Verwertung ist durch diese Lizenz nicht erlaubt.
 
 Native iPad-App in SwiftUI, ab iPadOS 17. Bilder direkt auf einer SMB-2/3-Freigabe ansehen und mit 0–5 Sternen bewerten. Der Projektordner enthält ein direkt in Xcode zu öffnendes App-Projekt und ein separat testbares Metadatenmodul.
+
+## Beispiel-Screenshots
+
+Die Aufnahmen zeigen die Mac-Catalyst-Version mit der integrierten Demobibliothek und generierten Landschaftsillustrationen. Die App ist primär für das iPad ausgelegt; die Anordnung der Bedienelemente kann dort abweichen.
+
+### Bibliothek
+
+Bildübersicht mit Sternebewertungen und Bildern aus Unterordnern.
+
+![Bildübersicht der Demobibliothek mit neun Bildern und Sternebewertungen](docs/screenshots/bibliothek.jpg)
+
+### Bewertungsfilter
+
+Die Bildübersicht lässt sich nach unbewerteten, mit 1–5 Sternen bewerteten oder abgelehnten Bildern filtern.
+
+![Geöffnetes Menü mit den verfügbaren Bewertungsfiltern](docs/screenshots/bewertungsfilter.jpg)
+
+### Einzelansicht
+
+Große Bildansicht mit Navigation und direkter Sternebewertung.
+
+![Einzelansicht eines Demo-Bildes mit einer Bewertung von drei Sternen](docs/screenshots/einzelansicht.jpg)
 
 ## Entstehung und Lizenz
 
