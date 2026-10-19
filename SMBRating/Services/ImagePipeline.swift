@@ -72,6 +72,20 @@ actor ImagePipeline {
         waiting.remove(at: index).continuation.resume()
     }
 
+    /// Image-only access for adjacent viewer pages; never retains original metadata.
+    func thumbnail(_ entry: RemoteEntry) async throws -> UIImage {
+        try await preview(entry, large: false, speculative: true).image
+    }
+
+    func rating(_ entry: RemoteEntry) async throws -> Int {
+        try await acquire(id: UUID(), speculative: false)
+        defer { release() }
+        try Task.checkCancellation()
+        let data = try await store.read(entry.path)
+        try Task.checkCancellation()
+        return try PhotoMetadata.read(data).rating
+    }
+
     func load(_ entry: RemoteEntry, large: Bool = false,
               onPreview: (@MainActor @Sendable (UIImage) -> Void)? = nil) async throws -> LoadedPhoto {
         let invalidationID = invalidationIDs[entry.path]
@@ -239,5 +253,67 @@ actor ImagePipeline {
                 kCGImageSourceShouldCacheImmediately: true
               ] as CFDictionary) else { throw RatingError.invalidImage }
         return UIImage(cgImage: cgImage)
+    }
+}
+
+/// Scroll callbacks update this controller without invalidating the SwiftUI hierarchy.
+@MainActor
+final class PreviewPrefetchCoordinator {
+    private var photos: [RemoteEntry] = []
+    private var indices: [String: Int] = [:]
+    private var visible = Set<String>()
+    private var pipeline: ImagePipeline?
+    private var enabled = false
+    private var pending: Task<Void, Never>?
+    private var loading: Task<Void, Never>?
+    private var currentWindow: [RemoteEntry] = []
+
+    func configure(photos: [RemoteEntry], indices: [String: Int], pipeline: ImagePipeline?, enabled: Bool) {
+        stop()
+        self.photos = photos
+        self.indices = indices
+        self.pipeline = pipeline
+        self.enabled = enabled
+        visible = visible.filter { indices[$0] != nil }
+        schedule()
+    }
+
+    func appear(_ path: String) {
+        guard visible.insert(path).inserted else { return }
+        schedule()
+    }
+
+    func disappear(_ path: String) {
+        guard visible.remove(path) != nil else { return }
+        schedule()
+    }
+
+    func stop() {
+        enabled = false
+        pending?.cancel(); pending = nil
+        loading?.cancel(); loading = nil
+        currentWindow = []
+    }
+
+    private func schedule() {
+        pending?.cancel()
+        guard enabled else { return }
+        pending = Task { [weak self] in
+            // Settle callbacks from the same row before changing transfer priorities.
+            do { try await Task.sleep(nanoseconds: 80_000_000) }
+            catch { return }
+            guard let self, self.enabled, let pipeline = self.pipeline else { return }
+            let positions = self.visible.compactMap { self.indices[$0] }
+            let window = PreviewPrefetchWindow.entries(in: self.photos, visibleIndices: positions)
+            guard window != self.currentWindow else { return }
+            self.currentWindow = window
+            self.loading?.cancel()
+            self.loading = Task { await pipeline.prefetch(window) }
+        }
+    }
+
+    deinit {
+        pending?.cancel()
+        loading?.cancel()
     }
 }

@@ -14,30 +14,108 @@ struct LibraryView: View {
     @State private var showInfo = false
     @State private var deletionRequest: FileDeletionRequest?
     @State private var moveRequest: FileMoveRequest?
-    @State private var visiblePhotos = Set<String>()
+    @State private var listing = BrowserListing()
+    @State private var unfilteredListing = BrowserListing()
+    @State private var ratingFilter: RatingFilter = .all
+    @State private var filterRatings: [String: Int] = [:]
+    @State private var liveFilterRatings: [String: Int] = [:]
+    @State private var isReadingRatings = false
+    @State private var ratingReadCount = 0
+    @State private var ratingReadTotal = 0
+    @State private var ratingReadFailures = 0
+    @State private var ratingRefreshID = UUID()
+    @State private var activeRatingScan = UUID()
+    @State private var prefetch = PreviewPrefetchCoordinator()
 
-    private struct PrefetchRequest: Equatable {
-        let revision: UUID
+    private struct RatingScanRequest: Equatable {
         let entries: [RemoteEntry]
+        let revision: UUID
+        let query: String
+        let filter: RatingFilter
+        let refresh: UUID
+        let connected: Bool
+        let loading: Bool
     }
 
-    private var prefetchRequest: PrefetchRequest {
-        PrefetchRequest(revision: library.revision, entries: selection == nil && photosExpanded
-            ? PreviewPrefetchWindow.entries(in: photos, visible: visiblePhotos) : [])
+    private var ratingScanRequest: RatingScanRequest {
+        RatingScanRequest(entries: library.entries, revision: library.revision, query: query,
+            filter: ratingFilter, refresh: ratingRefreshID, connected: library.connected, loading: library.isLoading)
     }
 
-    private var photos: [RemoteEntry] {
-        let sorted = library.photos.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }
-            .sorted {
-                let order = $0.name.localizedStandardCompare($1.name)
-                return order == .orderedSame ? $0.path < $1.path : order == .orderedAscending
-            }
-        return sortDescending ? Array(sorted.reversed()) : sorted
+    private var photos: [RemoteEntry] { listing.photos }
+    private var folders: [RemoteEntry] { listing.folders }
+
+    private func rebuildListing() {
+        unfilteredListing = BrowserListing(entries: library.entries, query: query, descending: sortDescending)
+        applyRatingFilter()
     }
 
-    private var folders: [RemoteEntry] {
-        let filtered = library.folders.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }
-        return sortDescending ? Array(filtered.reversed()) : filtered
+    private func applyRatingFilter() {
+        listing = unfilteredListing.filtered(by: ratingFilter, ratings: filterRatings)
+        updatePrefetch()
+    }
+
+    private func updatePrefetch() {
+        prefetch.configure(photos: listing.photos, indices: listing.photoIndices, pipeline: library.pipeline,
+            enabled: library.connected && !library.isLoading && !isReadingRatings && photosExpanded && selection == nil)
+    }
+
+    private func ratingWasRead(_ rating: Int, path: String) {
+        guard ratingFilter != .all, unfilteredListing.photoIndices[path] != nil, filterRatings[path] != rating else { return }
+        liveFilterRatings[path] = rating
+        filterRatings[path] = rating
+        applyRatingFilter()
+    }
+
+    private func readRatings(_ request: RatingScanRequest) async {
+        guard !Task.isCancelled else { return }
+        let scan = UUID()
+        activeRatingScan = scan
+        liveFilterRatings = [:]
+        filterRatings = [:]; ratingReadCount = 0; ratingReadTotal = 0; ratingReadFailures = 0
+        isReadingRatings = false
+        applyRatingFilter()
+        guard request.filter != .all, request.connected, !request.loading, let pipeline = library.pipeline else { return }
+        let endActivity = ReadExecutionCoordinator.shared.beginActivity()
+        defer { endActivity() }
+        // Read in display order so new matches normally arrive below existing ones.
+        let candidates = BrowserListing(entries: request.entries, query: request.query, descending: sortDescending).photos
+        let total = candidates.count
+        var backgroundScan: (update: (Int) -> Void, finish: (Bool) -> Void)?
+        var scanSucceeded = false
+        defer { backgroundScan?.finish(scanSucceeded) }
+        ratingReadTotal = total
+        isReadingRatings = total > 0
+        let delivery = RatingScanDelivery(filter: request.filter, total: total) { partial, count in
+            guard activeRatingScan == scan, !Task.isCancelled else { return }
+            ratingReadCount = count
+            backgroundScan?.update(count)
+            filterRatings = partial.ratings.merging(liveFilterRatings) { _, fresh in fresh }
+            ratingReadFailures = partial.failedPaths.filter { liveFilterRatings[$0] == nil }.count
+            applyRatingFilter()
+        }
+        defer {
+            delivery.cancel()
+            if activeRatingScan == scan { isReadingRatings = false }
+        }
+        do {
+            // Typing a filename must not start a full metadata read on every keystroke.
+            if !request.query.isEmpty { try await Task.sleep(nanoseconds: 180_000_000) }
+            try Task.checkCancellation()
+            backgroundScan = ReadBackgroundRuntime.shared.beginRatingScan(total: total)
+            let result = try await RatingScanner.scan(candidates, read: { try await pipeline.rating($0) }, update: { path, rating, count in
+                await delivery.receive(path: path, rating: rating, completed: count)
+            })
+            try Task.checkCancellation()
+            guard activeRatingScan == scan else { return }
+            filterRatings = result.ratings.merging(liveFilterRatings) { _, fresh in fresh }
+            ratingReadFailures = result.failedPaths.filter { liveFilterRatings[$0] == nil }.count
+            applyRatingFilter()
+            scanSucceeded = true
+        } catch is CancellationError {} catch {
+            guard activeRatingScan == scan else { return }
+            ratingReadFailures = total
+        }
     }
 
     private var sidebarIsVisible: Bool {
@@ -140,6 +218,7 @@ struct LibraryView: View {
                         ToolbarItemGroup(placement: .topBarTrailing) {
                             Button { Task { await library.loadFolder(library.path, refreshPreviews: true) } } label: { Image(systemName: "arrow.clockwise") }
                                 .disabled(library.isLoading).accessibilityLabel("Ordner neu laden")
+                            ratingFilterMenu
                             Menu {
                                 Toggle("Unterordner einbeziehen", isOn: Binding(
                                     get: { library.includeSubfolders },
@@ -182,13 +261,83 @@ struct LibraryView: View {
                 catch { library.error = "Das Löschen konnte nicht bestätigt werden: \(error.localizedDescription)\nBitte den Ordner neu laden, um den aktuellen Stand zu prüfen." }
             }
         }
-        .onChange(of: library.path) { _, _ in query = "" }
-        .onChange(of: library.revision) { _, _ in visiblePhotos = [] }
-        .task(id: prefetchRequest) {
-            guard let pipeline = library.pipeline else { return }
-            await pipeline.prefetch(prefetchRequest.entries)
+        .onChange(of: library.connected, initial: true) { _, connected in
+            guard connected else { return }
+            // Once a folder is ready, give the photos the full width. Manual
+            // sidebar changes remain in effect while browsing this connection.
+            columnVisibility = .detailOnly
+            compactColumn = .detail
         }
+        .onChange(of: library.path) { _, _ in query = "" }
+        .onChange(of: library.entries, initial: true) { _, _ in rebuildListing() }
+        .onChange(of: query) { _, _ in rebuildListing() }
+        .onChange(of: sortDescending) { _, _ in rebuildListing() }
+        .onChange(of: ratingFilter) { _, _ in
+            filterRatings = [:]; ratingReadFailures = 0
+            applyRatingFilter()
+        }
+        .onChange(of: library.ratings) { previous, ratings in
+            guard ratingFilter != .all else { return }
+            for (path, rating) in ratings where previous[path] != rating {
+                ratingWasRead(rating, path: path)
+            }
+        }
+        .onChange(of: library.revision) { _, _ in updatePrefetch() }
+        .onChange(of: library.isLoading) { _, _ in updatePrefetch() }
+        .onChange(of: isReadingRatings) { _, _ in updatePrefetch() }
+        .onChange(of: photosExpanded) { _, _ in updatePrefetch() }
+        .onChange(of: selection?.id) { _, _ in updatePrefetch() }
+        .onAppear { updatePrefetch() }
+        .onDisappear { prefetch.stop() }
         .task { await library.restoreLastSession() }
+        .task(id: ratingScanRequest) { await readRatings(ratingScanRequest) }
+    }
+
+    private var ratingFilterMenu: some View {
+        Menu {
+            Picker("Bewertung", selection: $ratingFilter) {
+                ForEach(RatingFilter.allCases) { filter in Text(filter.title).tag(filter) }
+            }
+            if ratingFilter != .all {
+                Divider()
+                Button("Bewertungen erneut lesen") { ratingRefreshID = UUID() }
+                    .disabled(isReadingRatings)
+            }
+        } label: {
+            Label("Bewertung filtern", systemImage: ratingFilter == .all
+                ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
+        }
+        .accessibilityLabel("Bewertung filtern: \(ratingFilter.title)")
+        .disabled(library.isLoading || library.isConnecting || library.isBusy)
+    }
+
+    private var ratingFilterStatus: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label(ratingFilter.title, systemImage: "star.fill").foregroundStyle(Theme.accent)
+                Spacer()
+                Button(isReadingRatings ? "Abbrechen" : "Filter entfernen") { ratingFilter = .all }
+            }
+            if isReadingRatings { ratingReadProgress }
+            if ratingReadFailures > 0 {
+                HStack {
+                    Text(ratingReadFailures == 1 ? "Eine Bewertung konnte nicht gelesen werden."
+                         : "\(ratingReadFailures) Bewertungen konnten nicht gelesen werden.")
+                        .foregroundStyle(Theme.muted)
+                    Spacer()
+                    Button("Erneut prüfen") { ratingRefreshID = UUID() }
+                        .disabled(isReadingRatings)
+                }
+            }
+        }.font(.caption).padding(.horizontal, 28).padding(.bottom, 12)
+    }
+
+    private var ratingReadProgress: some View {
+        HStack(spacing: 8) {
+            ProgressView().controlSize(.mini)
+            Text("\(ratingReadCount) / \(ratingReadTotal) Bewertungen geprüft · weitere Treffer erscheinen automatisch")
+                .foregroundStyle(Theme.muted)
+        }.font(.caption)
     }
 
     private var welcome: some View {
@@ -241,8 +390,9 @@ struct LibraryView: View {
                 Spacer()
                 if library.isDeleting { ProgressView("Datei wird gelöscht …").font(.caption) }
                 else if library.isMoving { ProgressView("Datei wird verschoben …").font(.caption) }
-                else { Text("\(photos.count) Bilder").font(.caption).foregroundStyle(Theme.muted) }
+                else { Text(photos.count == 1 ? "1 Bild" : "\(photos.count) Bilder").font(.caption).foregroundStyle(Theme.muted) }
             }.padding(.horizontal, 28).padding(.vertical, 18)
+            if ratingFilter != .all { ratingFilterStatus }
             if library.isDemo {
                 HStack {
                     Image(systemName: "sparkles")
@@ -281,13 +431,15 @@ struct LibraryView: View {
                             }
                         }
                     }.tint(Theme.accent).padding(28)
-                    if photos.isEmpty && folders.isEmpty {
-                        ContentUnavailableView(query.isEmpty ? "Keine Bilder in diesem Ordner" : "Keine Treffer",
-                            systemImage: query.isEmpty ? "photo.on.rectangle" : "magnifyingglass",
-                            description: Text(query.isEmpty ? "Öffne einen anderen Ordner oder lade die Ansicht neu." : "Versuche einen anderen Dateinamen."))
+                    if !isReadingRatings && photos.isEmpty && (folders.isEmpty || ratingFilter != .all) {
+                        ContentUnavailableView(ratingFilter != .all ? "Keine Bilder mit dieser Bewertung"
+                            : (query.isEmpty ? "Keine Bilder in diesem Ordner" : "Keine Treffer"),
+                            systemImage: ratingFilter != .all ? "star.slash" : (query.isEmpty ? "photo.on.rectangle" : "magnifyingglass"),
+                            description: Text(ratingFilter != .all ? "Wähle eine andere Bewertung oder entferne den Filter."
+                                : (query.isEmpty ? "Öffne einen anderen Ordner oder lade die Ansicht neu." : "Versuche einen anderen Dateinamen.")))
                             .padding(.top, 70)
                     }
-                }.id(library.revision)
+                }.id("\(library.revision)-\(query)-\(sortDescending)-\(ratingFilter.rawValue)")
             }
         }
         .searchable(text: $query, prompt: "Dateinamen suchen")
@@ -323,16 +475,16 @@ struct LibraryView: View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: tileSize), spacing: 18, alignment: .top)], spacing: 24) {
             ForEach(photos) { entry in
                 Button {
-                    selection = ViewerSelection(entries: photos, index: photos.firstIndex(of: entry) ?? 0)
+                    selection = ViewerSelection(entries: photos, index: listing.photoIndices[entry.path] ?? 0)
                 } label: {
                     PhotoTile(entry: entry, showFullImage: showFullImage, onMove: {
                         moveRequest = library.moveRequest(for: entry)
                     }, onDelete: {
                         deletionRequest = library.deletionRequest(for: entry)
-                    })
+                    }, onRatingLoaded: { ratingWasRead($0, path: entry.path) })
                 }.buttonStyle(.plain).disabled(library.isBusy)
-                    .onAppear { visiblePhotos.insert(entry.path) }
-                    .onDisappear { visiblePhotos.remove(entry.path) }
+                    .onAppear { prefetch.appear(entry.path) }
+                    .onDisappear { prefetch.disappear(entry.path) }
             }
         }
     }
@@ -382,6 +534,7 @@ struct PhotoTile: View {
     let showFullImage: Bool
     let onMove: () -> Void
     let onDelete: () -> Void
+    let onRatingLoaded: (Int) -> Void
     @State private var photo: LoadedPhoto?
     @State private var previewImage: UIImage?
     @State private var failure: String?
@@ -422,12 +575,12 @@ struct PhotoTile: View {
                     }
                 } else {
                     Text(failure == nil ? "Bewertung wird geladen …" : "Bewertung nicht verfügbar")
-                        .font(.caption2).foregroundStyle(Theme.muted)
+                        .font(.caption2).foregroundStyle(Theme.muted).lineLimit(1)
                 }
                 Spacer()
                 Text(rating == -1 ? "Abgelehnt" : (entry.name as NSString).pathExtension.uppercased())
                     .font(.system(size: 9, weight: .semibold, design: .monospaced)).foregroundStyle(Theme.muted)
-            }.font(.system(size: 10))
+            }.font(.system(size: 10)).frame(height: 18)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(entry.name), \(library.includeSubfolders ? entry.relativeFolder(to: library.path) + ", " : "")\((library.ratings[entry.path] ?? photo?.metadata.rating).map { "\($0) Sterne" } ?? (failure == nil ? "Bewertung wird geladen" : "Bewertung nicht verfügbar"))")
@@ -447,7 +600,7 @@ struct PhotoTile: View {
         .task(id: "\(library.revision)-\(attempt)") {
             guard let pipeline = library.pipeline else { return }
             photo = nil; failure = nil
-            library.ratings.removeValue(forKey: entry.path)
+            library.clearRatingOverride(for: entry.path)
             do {
                 let loaded = try await pipeline.load(entry) { image in
                     guard !Task.isCancelled else { return }
@@ -455,8 +608,61 @@ struct PhotoTile: View {
                 }
                 try Task.checkCancellation()
                 photo = loaded; failure = nil
-                library.ratings.removeValue(forKey: entry.path)
+                library.clearRatingOverride(for: entry.path)
+                onRatingLoaded(loaded.metadata.rating)
             } catch is CancellationError {} catch { failure = error.localizedDescription }
         }
     }
+}
+
+/// Collects streaming reads without publishing a SwiftUI update for every file.
+@MainActor
+private final class RatingScanDelivery {
+    private let filter: RatingFilter
+    private let total: Int
+    private let publish: (RatingScanResult, Int) -> Void
+    private var ratings: [String: Int] = [:]
+    private var failures: [String] = []
+    private var completed = 0
+    private var hasPublishedMatch = false
+    private var lastPublished = Date.distantPast
+    private var pending: Task<Void, Never>?
+
+    init(filter: RatingFilter, total: Int, publish: @escaping (RatingScanResult, Int) -> Void) {
+        self.filter = filter
+        self.total = total
+        self.publish = publish
+    }
+
+    func receive(path: String, rating: Int?, completed: Int) {
+        guard !Task.isCancelled else { return }
+        if let rating { ratings[path] = rating } else { failures.append(path) }
+        self.completed = completed
+        let firstMatch = !hasPublishedMatch && filter.matches(rating)
+        if firstMatch { hasPublishedMatch = true }
+        if firstMatch || completed == total || Date().timeIntervalSince(lastPublished) >= 0.08 {
+            flush()
+        } else if pending == nil {
+            pending = Task { [weak self] in
+                do { try await Task.sleep(nanoseconds: 80_000_000) }
+                catch { return }
+                guard let self, !Task.isCancelled else { return }
+                self.pending = nil
+                self.flush()
+            }
+        }
+    }
+
+    func cancel() {
+        pending?.cancel()
+        pending = nil
+    }
+
+    private func flush() {
+        cancel()
+        lastPublished = Date()
+        publish(RatingScanResult(ratings: ratings, failedPaths: failures), completed)
+    }
+
+    deinit { pending?.cancel() }
 }

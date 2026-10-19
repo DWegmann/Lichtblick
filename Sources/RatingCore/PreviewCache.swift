@@ -86,7 +86,13 @@ enum PreviewPrefetchWindow {
     /// A small margin on both sides also supports scrolling back up.
     static func entries(in photos: [RemoteEntry], visible: Set<String>, margin: Int = 12) -> [RemoteEntry] {
         let indices = photos.indices.filter { visible.contains(photos[$0].path) }
-        guard let first = indices.first, let last = indices.last else { return [] }
+        return entries(in: photos, visibleIndices: indices, margin: margin)
+    }
+
+    /// Uses the listing's index so a scroll event only visits visible cells and neighbours.
+    static func entries(in photos: [RemoteEntry], visibleIndices: [Int], margin: Int = 12) -> [RemoteEntry] {
+        let indices = visibleIndices.filter { photos.indices.contains($0) }
+        guard margin > 0, let first = indices.min(), let last = indices.max() else { return [] }
         let next = photos[(last + 1)..<min(photos.count, last + 1 + margin)]
         let previous = photos[max(0, first - margin)..<first].reversed()
         // Alternate near neighbours so both scroll directions warm up first.

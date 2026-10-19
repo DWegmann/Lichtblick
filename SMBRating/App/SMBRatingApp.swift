@@ -2,13 +2,24 @@ import SwiftUI
 
 @main
 struct SMBRatingApp: App {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var library = LibraryModel()
     var body: some Scene {
         WindowGroup {
             LibraryView().environmentObject(library)
                 .preferredColorScheme(.dark)
                 .tint(Theme.accent)
+                .onChange(of: scenePhase, initial: true) { _, phase in
+                    if phase == .active { ReadExecutionCoordinator.shared.setActive(true) }
+                    else if phase == .background { ReadExecutionCoordinator.shared.setActive(false) }
+                }
         }
+    }
+}
+
+extension ReadExecutionCoordinator {
+    static let shared = ReadExecutionCoordinator { expiration in
+        ReadBackgroundRuntime.shared.begin(expiration: expiration)
     }
 }
 

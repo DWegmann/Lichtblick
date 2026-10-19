@@ -24,6 +24,10 @@ actor SMBStore: PhotoStore {
     }
 
     func list(_ path: String) async throws -> [RemoteEntry] {
+        try await ReadExecutionCoordinator.shared.read { try await self.listOnce(path) }
+    }
+
+    private func listOnce(_ path: String) async throws -> [RemoteEntry] {
         try await manager.contentsOfDirectory(atPath: path).compactMap { item in
             guard let name = item[.nameKey] as? String, !name.hasPrefix(".") else { return nil }
             return RemoteEntry(path: (path as NSString).appendingPathComponent(name), name: name,
@@ -36,10 +40,25 @@ actor SMBStore: PhotoStore {
     }
 
     func read(_ path: String) async throws -> Data {
+        try await ReadExecutionCoordinator.shared.read { try await self.readOnce(path) }
+    }
+
+    private func readOnce(_ path: String) async throws -> Data {
         let attributes = try await manager.attributesOfItem(atPath: path)
+        try Task.checkCancellation()
         let size = (attributes[.fileSizeKey] as? NSNumber)?.intValue ?? 0
         guard size <= Self.maximumBytes else { throw RatingError.tooLarge }
-        let data: Data = try await manager.contents(atPath: path, range: 0..<(Self.maximumBytes + 1))
+        let cancellation = ReadCancellation()
+        let data: Data = try await withTaskCancellationHandler {
+            try Task.checkCancellation()
+            return try await manager.contents(atPath: path, range: 0..<(Self.maximumBytes + 1),
+                progress: { _, _ in cancellation.shouldContinue })
+        } onCancel: {
+            cancellation.cancel()
+        }
+        // AMSMB2 may return the transferred prefix when its progress callback
+        // stops a read. Never decode or publish such an interrupted file.
+        try Task.checkCancellation()
         guard data.count <= Self.maximumBytes else { throw RatingError.tooLarge }
         return data
     }
@@ -52,4 +71,19 @@ actor SMBStore: PhotoStore {
     }
     func remove(_ path: String) async throws { try await manager.removeFile(atPath: path) }
     func disconnect() async { try? await manager.disconnectShare(gracefully: true) }
+}
+
+private final class ReadCancellation: @unchecked Sendable {
+    private let lock = NSLock()
+    private var cancelled = false
+    var shouldContinue: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return !cancelled
+    }
+    func cancel() {
+        lock.lock()
+        cancelled = true
+        lock.unlock()
+    }
 }

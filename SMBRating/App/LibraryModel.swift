@@ -47,6 +47,12 @@ final class LibraryModel: ObservableObject {
     var locationName: String { path == rootPath ? (isDemo ? "Demobibliothek" : settings.share) : (path as NSString).lastPathComponent }
     var isBusy: Bool { isSaving || isDeleting || isMoving }
 
+    func clearRatingOverride(for path: String) {
+        // Mutating an absent dictionary key still publishes a model change to every tile.
+        guard ratings[path] != nil else { return }
+        ratings.removeValue(forKey: path)
+    }
+
     // Keep the form draft separate from the active connection so editing the next
     // host does not change labels or settings of an already connected server.
     var savedConnectionSettings: ConnectionSettings {
@@ -168,6 +174,8 @@ final class LibraryModel: ObservableObject {
     @discardableResult
     func loadFolder(_ destination: String, includingSubfolders: Bool? = nil, refreshPreviews: Bool = false) async -> Bool {
         guard let store, !isBusy, !isConnecting else { return false }
+        let endActivity = ReadExecutionCoordinator.shared.beginActivity()
+        defer { endActivity() }
         let changesFolder = destination != path
         // Recursive browsing belongs to this location; refreshing it keeps the
         // selection, while navigating elsewhere always starts with direct children.
